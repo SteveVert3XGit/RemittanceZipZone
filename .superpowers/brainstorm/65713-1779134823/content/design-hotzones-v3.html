@@ -1,0 +1,101 @@
+<h2>Hot Zone Algorithm — v3: Demand-Adjusted Classification</h2>
+<p class="subtitle">Competitors validate demand. Saturation is WU density relative to that demand — not an absolute count.</p>
+
+<div class="section">
+  <h3>Two-Axis Model</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:16px;border:1px solid #30363d">
+
+    <!-- 2x2 quadrant diagram -->
+    <div style="display:grid;grid-template-columns:24px 1fr 1fr;grid-template-rows:1fr 1fr 24px;gap:3px;width:420px;margin:0 auto">
+
+      <!-- Y axis label -->
+      <div style="grid-row:1/3;grid-column:1;display:flex;align-items:center;justify-content:center">
+        <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:10px;color:#888;letter-spacing:1px;white-space:nowrap">WU SUPPLY DENSITY →</div>
+      </div>
+
+      <!-- Q1: High demand, High WU -->
+      <div style="background:#1a2a1a;border-radius:6px;padding:12px;border:1px solid #2a4a2a">
+        <div style="font-size:10px;color:#888;letter-spacing:1px;margin-bottom:4px">HIGH DEMAND · HIGH WU</div>
+        <div style="color:#f0c040;font-weight:bold;font-size:12px;margin-bottom:4px">⚠ MONITOR</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5">WU density justified by strong demand + competitor validation. Watch for new competitor entry.</div>
+      </div>
+
+      <!-- Q2: Low demand, High WU -->
+      <div style="background:#2a1a1a;border-radius:6px;padding:12px;border:1px solid #4a2a2a">
+        <div style="font-size:10px;color:#888;letter-spacing:1px;margin-bottom:4px">LOW DEMAND · HIGH WU</div>
+        <div style="color:#f85149;font-weight:bold;font-size:12px;margin-bottom:4px">▼ REDUCE</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5">WU oversaturated relative to market size. No competitor validation of demand. Consolidate.</div>
+      </div>
+
+      <!-- Q3: High demand, Low WU -->
+      <div style="background:#0a1f0a;border-radius:6px;padding:12px;border:1px solid #1a4a1a">
+        <div style="font-size:10px;color:#888;letter-spacing:1px;margin-bottom:4px">HIGH DEMAND · LOW/NO WU</div>
+        <div style="color:#3fb950;font-weight:bold;font-size:12px;margin-bottom:4px">▲ EXPAND</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5">Strong demand signal + competitor presence confirms market. WU missing = clear gap.</div>
+      </div>
+
+      <!-- Q4: Low demand, Low WU -->
+      <div style="background:#111318;border-radius:6px;padding:12px;border:1px solid #2a2a3a">
+        <div style="font-size:10px;color:#888;letter-spacing:1px;margin-bottom:4px">LOW DEMAND · LOW/NO WU</div>
+        <div style="color:#555;font-weight:bold;font-size:12px;margin-bottom:4px">— NEUTRAL</div>
+        <div style="font-size:11px;color:#666;line-height:1.5">No opportunity signal. No action needed. No zone rendered on map.</div>
+      </div>
+
+      <!-- X axis label -->
+      <div style="grid-row:3;grid-column:2/4;display:flex;align-items:center;justify-content:center">
+        <div style="font-size:10px;color:#888;letter-spacing:1px">← ADJUSTED DEMAND SCORE →</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Adjusted Demand Score Formula</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:14px;border:1px solid #30363d;font-size:12px">
+    <div style="color:#aaa;font-size:10px;letter-spacing:1px;margin-bottom:10px">DEMAND SIGNALS (within 0.3mi cluster radius)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;color:#ccc;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:#1a1f2e;border-radius:4px">
+        <span>🟣 Ethnic Grocery / Supermarket</span><span style="color:#F5C518;font-weight:bold">+3</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:#1a1f2e;border-radius:4px">
+        <span>🟢 Financial Services</span><span style="color:#F5C518;font-weight:bold">+2</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:#1a1f2e;border-radius:4px">
+        <span>🩷 Dollar Stores</span><span style="color:#F5C518;font-weight:bold">+1</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:#1a1f2e;border-radius:4px">
+        <span>🔵 Laundromats</span><span style="color:#F5C518;font-weight:bold">+1</span>
+      </div>
+    </div>
+
+    <div style="color:#aaa;font-size:10px;letter-spacing:1px;margin-bottom:8px">COMPETITOR VALIDATION BONUS (within 0.5mi)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;color:#ccc;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:#1a2030;border-radius:4px;border:1px solid #2a3a50">
+        <span>🔵 MoneyGram present</span><span style="color:#79c0ff;font-weight:bold">+2</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:#1a2030;border-radius:4px;border:1px solid #2a3a50">
+        <span>🔴 Ria present</span><span style="color:#79c0ff;font-weight:bold">+2</span>
+      </div>
+    </div>
+
+    <div style="background:#0a1020;border-radius:6px;padding:8px;font-size:11px;color:#79c0ff;border:1px solid #1a2a40">
+      Competitors add to demand score because their presence proves remittance customers already exist in that cluster — they chose to locate there for a reason.
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Classification Thresholds</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:14px;border:1px solid #30363d;font-family:monospace;font-size:12px;color:#e6edf3;line-height:2">
+    <span style="color:#8b949e">// adjDemand = sum of all signals above within radius</span><br>
+    <span style="color:#8b949e">// wuCount   = Western Union locations within 0.5mi</span><br><br>
+
+    <span style="color:#3fb950">EXPAND</span>&nbsp;&nbsp;&nbsp;: adjDemand ≥ <span style="color:#F5C518">5</span> <span style="color:#3fb950">AND</span> wuCount == <span style="color:#F5C518">0</span><br>
+    <span style="color:#f0c040">MONITOR</span>&nbsp; : adjDemand ≥ <span style="color:#F5C518">5</span> <span style="color:#3fb950">AND</span> wuCount ≥ <span style="color:#F5C518">2</span><br>
+    <span style="color:#f85149">REDUCE</span>&nbsp;&nbsp;&nbsp;: adjDemand &lt; <span style="color:#F5C518">4</span> <span style="color:#3fb950">AND</span> wuCount ≥ <span style="color:#F5C518">2</span><br>
+    <span style="color:#555">NEUTRAL</span>&nbsp; : everything else — no zone rendered
+  </div>
+</div>
+
+<p style="color:#aaa;font-size:13px;margin-top:16px">Does this model feel right? The thresholds (5 for high demand, 4 for low demand cutoff) are starting points — they can be tuned once real data is in. Any adjustments to the quadrant logic or scoring weights?</p>

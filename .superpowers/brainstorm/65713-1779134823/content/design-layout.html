@@ -1,0 +1,135 @@
+<h2>Design Section 3 of 4: UI Layout & Analysis Panel</h2>
+<p class="subtitle">Wireframe of the full page — map, controls, pin detail, and recommendations panel</p>
+
+<div class="section">
+  <h3>Full Page Layout</h3>
+  <div style="background:#0d1117;border-radius:10px;padding:16px;border:1px solid #30363d;font-size:12px">
+
+    <!-- Header -->
+    <div style="background:#1a1f2e;border-radius:6px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div>
+        <span style="color:#F5C518;font-weight:bold;font-size:14px">⬡ WU Competitive Intel</span>
+        <span style="color:#666;margin-left:8px">ZIP 33147 — NW Miami</span>
+      </div>
+      <button style="background:#2a2a2a;color:#ccc;border:1px solid #444;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer">⬇ Export PDF</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:10px">
+
+      <!-- Left: Map + Controls -->
+      <div>
+        <!-- Toggle bar -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+          <button style="background:#F5C518;color:#000;border:none;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:bold">● Western Union</button>
+          <button style="background:#004B87;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px">● MoneyGram</button>
+          <button style="background:#E31837;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px">● Ria</button>
+          <button style="background:#1D9E75;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px">● Financial Svcs</button>
+          <button style="background:#9B59B6;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px">● Ethnic Grocery</button>
+          <button style="background:#E91E8C;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px">● Dollar Stores</button>
+          <button style="background:#00BCD4;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px">● Laundromats</button>
+          <button style="background:#2a2a2a;color:#3fb950;border:1px solid #3fb950;padding:4px 10px;border-radius:4px;font-size:11px">◎ Expansion Zones</button>
+          <button style="background:#2a2a2a;color:#f85149;border:1px solid #f85149;padding:4px 10px;border-radius:4px;font-size:11px">◎ Saturation Zones</button>
+        </div>
+
+        <!-- SVG Map placeholder -->
+        <div style="background:#1a2030;border-radius:8px;height:340px;display:flex;align-items:center;justify-content:center;border:1px solid #2a3040;position:relative">
+          <div style="position:absolute;top:10px;left:10px;font-size:10px;color:#556;font-family:monospace">SVG 700×520 — hand-drawn streets</div>
+
+          <!-- Mini mock map -->
+          <svg width="380" height="240" style="opacity:0.8">
+            <!-- Streets -->
+            <line x1="190" y1="20" x2="190" y2="220" stroke="#334" stroke-width="3"/>
+            <line x1="20" y1="120" x2="360" y2="120" stroke="#334" stroke-width="3"/>
+            <line x1="20" y1="60" x2="360" y2="60" stroke="#223" stroke-width="2"/>
+            <line x1="20" y1="180" x2="360" y2="180" stroke="#223" stroke-width="2"/>
+            <line x1="80" y1="20" x2="80" y2="220" stroke="#223" stroke-width="2"/>
+            <line x1="300" y1="20" x2="300" y2="220" stroke="#223" stroke-width="2"/>
+
+            <!-- Street labels -->
+            <text x="185" y="15" fill="#445" font-size="8" font-family="monospace">NW 7th Ave</text>
+            <text x="5" y="118" fill="#445" font-size="8" font-family="monospace">NW 54th</text>
+            <text x="5" y="58" fill="#445" font-size="8" font-family="monospace">NW 79th</text>
+            <text x="5" y="178" fill="#445" font-size="8" font-family="monospace">NW 36th</text>
+
+            <!-- Expansion zone -->
+            <ellipse cx="280" cy="80" rx="45" ry="30" fill="rgba(63,185,80,0.15)" stroke="rgba(63,185,80,0.4)" stroke-width="1"/>
+            <text x="258" y="77" fill="#3fb950" font-size="7" font-family="monospace">Expansion</text>
+
+            <!-- Saturation zone -->
+            <ellipse cx="130" cy="140" rx="40" ry="28" fill="rgba(248,81,73,0.15)" stroke="rgba(248,81,73,0.4)" stroke-width="1"/>
+            <text x="112" y="137" fill="#f85149" font-size="7" font-family="monospace">Saturated</text>
+
+            <!-- WU pins -->
+            <circle cx="190" cy="120" r="7" fill="#F5C518"/>
+            <circle cx="130" cy="60" r="7" fill="#F5C518"/>
+
+            <!-- MG pins -->
+            <circle cx="100" cy="140" r="7" fill="#004B87"/>
+            <circle cx="160" cy="150" r="7" fill="#004B87"/>
+
+            <!-- Ria -->
+            <circle cx="140" cy="130" r="7" fill="#E31837"/>
+
+            <!-- Demand signals (small) -->
+            <circle cx="280" cy="70" r="4" fill="#9B59B6"/>
+            <circle cx="300" cy="90" r="4" fill="#9B59B6"/>
+            <circle cx="260" cy="85" r="4" fill="#1D9E75"/>
+            <circle cx="290" cy="60" r="4" fill="#E91E8C"/>
+            <circle cx="310" cy="75" r="4" fill="#00BCD4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Right: Info panel -->
+      <div style="display:flex;flex-direction:column;gap:8px">
+
+        <!-- Pin detail (shown on click) -->
+        <div style="background:#1a1f2e;border-radius:8px;padding:12px;border:1px solid #30363d">
+          <div style="font-size:10px;color:#F5C518;font-weight:bold;letter-spacing:1px;margin-bottom:6px">WESTERN UNION</div>
+          <div style="font-size:13px;font-weight:bold;color:#e6edf3;margin-bottom:4px">Check City NW Miami</div>
+          <div style="font-size:11px;color:#8b949e;margin-bottom:6px">1234 NW 7th Ave, Miami FL 33147</div>
+          <div style="font-size:11px;color:#ccc">⭐ 4.2 · 38 reviews</div>
+          <div style="font-size:11px;color:#ccc">🕐 Mon–Sat 9am–7pm</div>
+          <a style="display:block;margin-top:8px;font-size:11px;color:#79c0ff;text-decoration:none">↗ Open in Google Maps</a>
+        </div>
+
+        <!-- Analysis scorecard -->
+        <div style="background:#1a1f2e;border-radius:8px;padding:12px;border:1px solid #30363d;flex:1">
+          <div style="font-size:10px;color:#aaa;font-weight:bold;letter-spacing:1px;margin-bottom:10px">ZONE ANALYSIS</div>
+
+          <div style="margin-bottom:10px">
+            <div style="font-size:11px;color:#3fb950;font-weight:bold;margin-bottom:4px">▲ EXPANSION (2 zones)</div>
+            <div style="font-size:11px;color:#ccc;padding-left:8px;line-height:1.7">
+              NW 27th Ave corridor<br>
+              <span style="color:#888">High demand · No WU coverage</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom:10px">
+            <div style="font-size:11px;color:#f85149;font-weight:bold;margin-bottom:4px">▼ SATURATION (1 zone)</div>
+            <div style="font-size:11px;color:#ccc;padding-left:8px;line-height:1.7">
+              NW 54th St cluster<br>
+              <span style="color:#888">WU + MG + Ria within 0.2mi</span>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid #2a2a3a;padding-top:8px;margin-top:8px">
+            <div style="font-size:10px;color:#aaa;letter-spacing:1px;margin-bottom:6px">COMPETITOR COUNT</div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#ccc">
+              <span>🟡 Western Union</span><span style="color:#F5C518;font-weight:bold">–</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#ccc">
+              <span>🔵 MoneyGram</span><span style="color:#004B87;font-weight:bold">–</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#ccc">
+              <span>🔴 Ria</span><span style="color:#E31837;font-weight:bold">–</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="color:#aaa;font-size:13px;margin-top:16px">Does this layout feel right? The right panel shows pin details on click (top) and the always-visible zone analysis scorecard (bottom). Any layout changes?</p>

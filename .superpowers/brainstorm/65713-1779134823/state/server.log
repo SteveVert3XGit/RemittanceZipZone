@@ -1,0 +1,2 @@
+{"type":"server-started","port":55646,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:55646","screen_dir":"/Users/vert3x/Library/CloudStorage/GoogleDrive-steve@vert3x.co/Shared drives/03_Vert3X_Internal_Ops/local-dev/dev-steve/Remittance-Engine(Zip)/.superpowers/brainstorm/65713-1779134823/content","state_dir":"/Users/vert3x/Library/CloudStorage/GoogleDrive-steve@vert3x.co/Shared drives/03_Vert3X_Internal_Ops/local-dev/dev-steve/Remittance-Engine(Zip)/.superpowers/brainstorm/65713-1779134823/state"}
+{"type":"server-stopped","reason":"idle timeout"}

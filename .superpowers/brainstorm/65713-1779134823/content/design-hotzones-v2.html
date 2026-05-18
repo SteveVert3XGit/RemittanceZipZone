@@ -1,0 +1,59 @@
+<h2>Hot Zone Algorithm — Revised</h2>
+<p class="subtitle">Zone logic is now purely WU-internal: too many WU = saturation, demand with no WU = expansion</p>
+
+<div class="section">
+  <h3>Revised Zone Logic</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:#e6edf3;border:1px solid #30363d;line-height:2">
+
+    <div style="color:#8b949e;margin-bottom:4px">// EXPANSION — opportunity signal exists, WU is absent</div>
+    <span style="color:#3fb950">if</span> demandScore(cluster) &gt; threshold<br>
+    &nbsp;&nbsp;<span style="color:#3fb950">AND</span> count(<span style="color:#F5C518">WU</span> within 0.5mi) == 0<br>
+    &nbsp;&nbsp;→ <span style="color:#3fb950">EXPANSION ZONE</span> — "Underserved, open here"<br><br>
+
+    <div style="color:#8b949e;margin-bottom:4px">// SATURATION — too many WU locations cannibalizing each other</div>
+    <span style="color:#f85149">if</span> count(<span style="color:#F5C518">WU</span> within 0.4mi of another <span style="color:#F5C518">WU</span>) &gt;= 2<br>
+    &nbsp;&nbsp;→ <span style="color:#f85149">SATURATION ZONE</span> — "WU oversaturated, review footprint"<br><br>
+
+    <div style="color:#8b949e;margin-bottom:4px">// Competitor presence (MoneyGram, Ria) shown on map for context only</div>
+    <div style="color:#666">// — informs expansion confidence, does NOT drive zone classification</div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>What Changed vs Previous Version</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+
+    <div style="background:#1f0a0a;border-radius:8px;padding:12px;border:1px solid #3a1a1a">
+      <div style="color:#f85149;font-size:10px;letter-spacing:1px;font-weight:bold;margin-bottom:8px">BEFORE (removed)</div>
+      <div style="font-size:12px;color:#aaa;line-height:1.7">
+        Saturation = 3+ remittance providers (WU + MG + Ria) within 0.5mi<br><br>
+        <span style="color:#666">Problem: flags WU locations as saturated because competitors are nearby — not actionable for WU decision-making</span>
+      </div>
+    </div>
+
+    <div style="background:#0a1f0a;border-radius:8px;padding:12px;border:1px solid #1a3a1a">
+      <div style="color:#3fb950;font-size:10px;letter-spacing:1px;font-weight:bold;margin-bottom:8px">NOW (correct)</div>
+      <div style="font-size:12px;color:#ccc;line-height:1.7">
+        Saturation = 2+ WU stores within 0.4mi of each other<br><br>
+        <span style="color:#888">WU cannibalizing its own agents — directly actionable: which WU to consolidate</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>Demand Score Inputs (unchanged)</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:12px;border:1px solid #30363d;font-size:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;color:#ccc">
+      <div>🟣 Ethnic Grocery / Supermarket <span style="color:#F5C518;float:right">+3</span></div>
+      <div>🟢 Financial Services (check cash etc) <span style="color:#F5C518;float:right">+2</span></div>
+      <div>🩷 Dollar Stores <span style="color:#F5C518;float:right">+1</span></div>
+      <div>🔵 Laundromats <span style="color:#F5C518;float:right">+1</span></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#666">Cluster threshold: demandScore ≥ 4 within 0.3mi radius triggers evaluation</div>
+  </div>
+</div>
+
+<p style="color:#aaa;font-size:13px;margin-top:16px">Does this revised logic look right?</p>

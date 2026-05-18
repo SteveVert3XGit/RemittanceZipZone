@@ -1,0 +1,85 @@
+<h2>Design Section 4 of 4: Analysis Narrative & Deliverables</h2>
+<p class="subtitle">What the tool produces, how it's hosted, and what's out of scope for this build</p>
+
+<div class="section">
+  <h3>Analysis Narrative Section (below the map)</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:14px;border:1px solid #30363d;font-size:12px">
+    <div style="color:#aaa;letter-spacing:1px;font-size:10px;margin-bottom:10px">COMPETITIVE INTELLIGENCE SUMMARY — ZIP 33147</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:#0a1f0a;border-radius:6px;padding:10px;border:1px solid #1a3a1a">
+        <div style="color:#3fb950;font-weight:bold;font-size:11px;margin-bottom:6px">▲ OPEN NEW LOCATIONS</div>
+        <div style="color:#ccc;font-size:11px;line-height:1.7">
+          1. NW 27th Ave @ NW 71st St<br>
+          <span style="color:#888">Dense ethnic grocery cluster, zero WU within 0.5mi</span><br><br>
+          2. NW 17th Ave @ NW 62nd St<br>
+          <span style="color:#888">High laundromat + dollar store density, underserved</span>
+        </div>
+      </div>
+      <div style="background:#1f0a0a;border-radius:6px;padding:10px;border:1px solid #3a1a1a">
+        <div style="color:#f85149;font-weight:bold;font-size:11px;margin-bottom:6px">▼ REDUCE FOOTPRINT</div>
+        <div style="color:#ccc;font-size:11px;line-height:1.7">
+          1. NW 54th St corridor<br>
+          <span style="color:#888">WU, MoneyGram, and Ria all within 0.2mi — cannibalization risk</span><br><br>
+          2. Review NW 7th Ave anchor<br>
+          <span style="color:#888">3 providers within 0.3mi, low demand signal density</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#1a1f2e;border-radius:6px;padding:10px;border:1px solid #2a3040">
+      <div style="color:#aaa;font-size:10px;letter-spacing:1px;margin-bottom:6px">MARKET CONTEXT</div>
+      <div style="color:#ccc;font-size:11px;line-height:1.7">
+        ZIP 33147 has [X] remittance locations across 3 providers within [Y] sq miles. MoneyGram leads with [N] locations; Western Union has [N] locations. Demand signal density is highest along the NW 27th Ave corridor, where [N] ethnic groceries, [N] laundromats, and [N] dollar stores cluster with no WU coverage — the clearest expansion signal in the ZIP.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Deliverable</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:12px;border:1px solid #30363d">
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:#3fb950">✓</span>
+        <span style="color:#ccc"><code>zip_33147_wu_competitive_map.html</code> — single self-contained file</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:#3fb950">✓</span>
+        <span style="color:#ccc">All store data in a top-of-file JS array — easy to edit or extend</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:#3fb950">✓</span>
+        <span style="color:#ccc">Hot zones computed from data at page load — no manual ellipses</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:#3fb950">✓</span>
+        <span style="color:#ccc">PDF export via html2pdf.js CDN</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:#3fb950">✓</span>
+        <span style="color:#ccc">Hostable on GitHub Pages (same repo: hipposteve02-sudo/BoostProspectEngine)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Explicitly Out of Scope (this build)</h3>
+  <div style="background:#1a1a0a;border-radius:8px;padding:12px;border:1px solid #3a3a1a;font-size:12px">
+    <div style="display:flex;flex-direction:column;gap:6px;color:#aaa">
+      <div>✗ Live Google Places API queries — data is hardcoded for demo speed</div>
+      <div>✗ ZIP selector — architecture is ready for it, UI deferred</div>
+      <div>✗ Leaflet tile map — SVG now, Leaflet when scaling</div>
+      <div>✗ Backend / database — fully static file</div>
+      <div>✗ Actual WU sales/transaction data — proxy signals only</div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;padding:12px;background:#1a1f2e;border-radius:8px;border-left:3px solid #F5C518">
+  <span class="label">Data sourcing note</span>
+  <p style="margin:6px 0 0;color:#ccc;font-size:12px">Store locations for 33147 will be researched via Google Places during build and hardcoded into the JS array. The demo will have realistic (not fabricated) location data — actual addresses, ratings, and hours from Google.</p>
+</div>
+
+<p style="color:#aaa;font-size:13px;margin-top:16px">Does this final section look right? Any additions to scope or the analysis narrative format before we write the spec?</p>

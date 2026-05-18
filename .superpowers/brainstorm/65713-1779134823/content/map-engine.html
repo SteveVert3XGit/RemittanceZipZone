@@ -1,0 +1,47 @@
+<h2>Map Engine: Which approach for the base map?</h2>
+<p class="subtitle">This affects zoom, pin accuracy, and how easy it is to add more ZIPs later</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="leaflet" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f1923;padding:16px;font-family:monospace;font-size:11px;color:#7ec8e3;min-height:140px;display:flex;flex-direction:column;gap:6px;justify-content:center">
+      <div style="background:#1a2a3a;border-radius:6px;padding:10px;border:1px solid #2a4a6a">
+        <div style="color:#4CAF50;margin-bottom:6px">🗺 Real tile map (OpenStreetMap)</div>
+        <div style="color:#aaa">• Zoom in/out — street level detail</div>
+        <div style="color:#aaa">• Accurate lat/lng pin placement</div>
+        <div style="color:#aaa">• No coordinate math needed</div>
+        <div style="color:#aaa">• Any ZIP works automatically</div>
+        <div style="color:#aaa">• Familiar Google Maps feel</div>
+      </div>
+      <div style="color:#7ec8e3;font-size:10px;margin-top:4px">Leaflet.js — 40KB, open source, CDN</div>
+    </div>
+    <div class="card-body">
+      <h3>Leaflet.js (Recommended)</h3>
+      <p>Real interactive tile map. Drop in a new ZIP and pins auto-place from lat/lng. Scales to any geography with zero rework.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="svg" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f1923;padding:16px;font-family:monospace;font-size:11px;color:#e3c87e;min-height:140px;display:flex;flex-direction:column;gap:6px;justify-content:center">
+      <div style="background:#2a1a0a;border-radius:6px;padding:10px;border:1px solid #6a4a2a">
+        <div style="color:#FF9800;margin-bottom:6px">🖼 Custom SVG drawing</div>
+        <div style="color:#aaa">• Hand-drawn streets and roads</div>
+        <div style="color:#aaa">• Manual coordinate math per ZIP</div>
+        <div style="color:#aaa">• No external dependencies</div>
+        <div style="color:#aaa">• Each new ZIP = full redraw</div>
+        <div style="color:#aaa">• Like the existing 33157 tool</div>
+      </div>
+      <div style="color:#e3c87e;font-size:10px;margin-top:4px">Pure HTML/CSS/JS — same as original</div>
+    </div>
+    <div class="card-body">
+      <h3>Custom SVG Map</h3>
+      <p>Hand-crafted per ZIP. Works offline and has no CDN dependency, but every new ZIP requires manually redrawing streets and recalculating coordinates.</p>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:20px;padding:14px;background:#1a1f2e;border-radius:8px;border-left:3px solid #4CAF50">
+  <span class="label">Why this matters</span>
+  <p style="margin:6px 0 0;color:#ccc;font-size:13px">Since we're building data-driven and scaling to multiple ZIPs, Leaflet eliminates the biggest scaling bottleneck. The original SVG approach required hand-drawing every street — Leaflet renders them automatically from OpenStreetMap tiles.</p>
+</div>

@@ -1,0 +1,83 @@
+<h2>Design Section 2 of 4: Hot Zone Algorithm</h2>
+<p class="subtitle">Zones are computed from data — not hand-drawn. Two zone types signal opposite recommendations.</p>
+
+<div class="section">
+  <h3>How Zones Are Computed</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:#e6edf3;border:1px solid #30363d;line-height:1.8">
+    <div style="color:#8b949e;margin-bottom:8px">// Step 1 — score each demand signal location</div>
+    <span style="color:#79c0ff">demandScore</span>(loc) = <span style="color:#a5d6ff">ethnic_grocery</span>(+3) + <span style="color:#a5d6ff">financial_svc</span>(+2) + <span style="color:#a5d6ff">dollar_store</span>(+1) + <span style="color:#a5d6ff">laundromat</span>(+1)<br><br>
+    <div style="color:#8b949e">// Step 2 — find clusters within 0.3 mile radius</div>
+    <span style="color:#79c0ff">cluster</span> = group demand signals where <span style="color:#ffa657">distance</span> &lt; 0.3mi<br><br>
+    <div style="color:#8b949e">// Step 3 — score remittance saturation at cluster centroid</div>
+    <span style="color:#79c0ff">saturationScore</span> = count(WU + MG + Ria within 0.5mi of centroid)<br><br>
+    <div style="color:#8b949e">// Step 4 — classify zone</div>
+    <span style="color:#3fb950">if</span> demandScore &gt; threshold <span style="color:#3fb950">AND</span> saturationScore &lt; 2 → <span style="color:#3fb950">EXPANSION zone</span><br>
+    <span style="color:#f85149">if</span> saturationScore ≥ 3 <span style="color:#f85149">AND</span> providers clustered &lt; 0.25mi → <span style="color:#f85149">SATURATION zone</span>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Zone Visual Language</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+    <div style="background:#0d1117;border-radius:8px;padding:14px;border:2px solid #3fb950">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:40px;height:24px;border-radius:12px;background:radial-gradient(ellipse, rgba(63,185,80,0.5) 0%, rgba(63,185,80,0) 100%);border:1px solid rgba(63,185,80,0.4)"></div>
+        <strong style="color:#3fb950">Expansion Opportunity</strong>
+      </div>
+      <div style="font-size:12px;color:#ccc;line-height:1.6">
+        <div>• Green radial gradient ellipse</div>
+        <div>• High demand signal density</div>
+        <div>• Low/no remittance coverage</div>
+        <div>• Label: "Underserved — Open Here"</div>
+      </div>
+    </div>
+
+    <div style="background:#0d1117;border-radius:8px;padding:14px;border:2px solid #f85149">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:40px;height:24px;border-radius:12px;background:radial-gradient(ellipse, rgba(248,81,73,0.5) 0%, rgba(248,81,73,0) 100%);border:1px solid rgba(248,81,73,0.4)"></div>
+        <strong style="color:#f85149">Saturation Risk</strong>
+      </div>
+      <div style="font-size:12px;color:#ccc;line-height:1.6">
+        <div>• Red radial gradient ellipse</div>
+        <div>• 3+ remittance providers nearby</div>
+        <div>• High competitive overlap</div>
+        <div>• Label: "Oversaturated — Review"</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>Map Layout: ZIP 33147 (NW Miami)</h3>
+  <div style="background:#0d1117;border-radius:8px;padding:14px;border:1px solid #30363d">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div style="font-size:12px;color:#ccc;line-height:1.8;flex:1">
+        <div><strong style="color:#e6edf3">SVG canvas:</strong> 700 × 520px (same as original)</div>
+        <div><strong style="color:#e6edf3">Key corridors to hand-draw:</strong></div>
+        <div style="padding-left:12px;color:#aaa">
+          NW 7th Ave (N/S spine)<br>
+          NW 27th Ave (W boundary)<br>
+          NW 54th St / NW 62nd St (E/W cross streets)<br>
+          NW 79th St (northern boundary)<br>
+          NW 36th St (southern boundary)
+        </div>
+      </div>
+      <div style="background:#1a1f2e;border-radius:6px;padding:10px;font-size:11px;color:#aaa;width:180px;flex-shrink:0">
+        <div style="color:#79c0ff;margin-bottom:6px;font-weight:bold">Coord mapping</div>
+        <div>lat range: 25.815 – 25.855</div>
+        <div>lng range: -80.255 – -80.215</div>
+        <div style="margin-top:6px;color:#ccc">svgX = (lng - lngMin) / lngRange × 700</div>
+        <div>svgY = (1 - (lat - latMin) / latRange) × 520</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;padding:12px;background:#1a1a2e;border-radius:8px;border-left:3px solid #79c0ff">
+  <span class="label">Toggle behavior</span>
+  <p style="margin:6px 0 0;color:#ccc;font-size:13px">Zones are a separate toggleable layer — off by default, toggled via a button like the original heat map. Expansion zones and saturation zones can be toggled independently.</p>
+</div>
+
+<p style="color:#aaa;font-size:13px;margin-top:16px">Does the zone logic and visual language look right? Any adjustments to scoring weights or thresholds?</p>
