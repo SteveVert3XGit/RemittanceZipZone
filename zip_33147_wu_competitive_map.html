@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WU Competitive Intel — ZIP 33147</title>
-  <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Aptos', sans-serif; background: #0f1117; color: #e6edf3; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background: #0f1117; color: #e6edf3; min-height: 100vh; }
   </style>
 </head>
 <body>
@@ -17,8 +17,8 @@
 const CLUSTER_RADIUS_MI     = 0.3;
 const COMPETITOR_RADIUS_MI  = 0.5;
 const WU_RADIUS_MI          = 0.5;
-const HIGH_DEMAND_THRESHOLD = 5;
-const LOW_DEMAND_THRESHOLD  = 4;
+const HIGH_DEMAND_THRESHOLD = 6;
+const LOW_DEMAND_THRESHOLD  = 3;
 
 // ─── MAP BOUNDS ───────────────────────────────────────────────────────────────
 const MAP = {
@@ -44,6 +44,9 @@ const DEMAND_WEIGHTS = {
 const COMPETITOR_BONUS = 2;
 
 // ─── STORE DATA ───────────────────────────────────────────────────────────────
+// NOTE: Some stores fall outside ZIP 33147 bounds but within the map's lat/lng range.
+// These are intentionally included as adjacent demand-spillover signals.
+// Stores with out-of-ZIP addresses are noted in their `notes` field.
 // ZIP 33147 — Liberty City / Northside, Miami FL
 // Bounds: lat 25.813–25.851, lng -80.251–-80.213
 // Street reference:
@@ -96,7 +99,7 @@ const stores = [
     category: 'western_union',
     name: 'Western Union @ Check Cashing USA',
     address: '9500 NW 27th Ave, Miami, FL 33147',
-    lat: 25.8510,
+    lat: 25.8508,
     lng: -80.2490,
     rating: 3.9,
     reviews: 17,
@@ -134,8 +137,8 @@ const stores = [
     category: 'moneygram',
     name: 'MoneyGram @ Walmart Supercenter',
     address: '3200 NW 79th St, Miami, FL 33147',
-    lat: 25.8490,
-    lng: -80.2490,
+    lat: 25.8492,
+    lng: -80.2488,
     rating: 3.8,
     reviews: 94,
     hours: 'Mon–Sun 6am–11pm',
@@ -194,7 +197,7 @@ const stores = [
     category: 'moneygram',
     name: 'MoneyGram @ Check Cashing USA',
     address: '9500 NW 27th Ave, Miami, FL 33147',
-    lat: 25.8512,
+    lat: 25.8510,
     lng: -80.2492,
     rating: 3.9,
     reviews: 17,
@@ -225,7 +228,7 @@ const stores = [
     rating: 4.0,
     reviews: 23,
     hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
-    notes: 'Inside El Shaddai Supermarket; Ria agent embedded in ethnic grocery'
+    notes: 'Inside El Shaddai Supermarket; Ria agent embedded in ethnic grocery. Adjacent spillover — ZIP 33142 but within map range.'
   },
   {
     id: 'ria_003',
@@ -258,7 +261,7 @@ const stores = [
     category: 'financial_services',
     name: 'Check Cashing USA',
     address: '9500 NW 27th Ave, Miami, FL 33147',
-    lat: 25.8513,
+    lat: 25.8510,
     lng: -80.2493,
     rating: 3.8,
     reviews: 17,
@@ -328,7 +331,7 @@ const stores = [
   {
     id: 'fin_007',
     category: 'financial_services',
-    name: 'Florida Check Cashing – NW 7th Ave',
+    name: 'Florida Check Cashing – NW 27th Ave',
     address: '7901 NW 27th Ave, Miami, FL 33147',
     lat: 25.8479,
     lng: -80.2491,
@@ -354,18 +357,6 @@ const stores = [
   {
     id: 'eg_002',
     category: 'ethnic_grocery',
-    name: 'Walmart Supercenter',
-    address: '3200 NW 79th St, Miami, FL 33147',
-    lat: 25.8493,
-    lng: -80.2494,
-    rating: 3.8,
-    reviews: 94,
-    hours: 'Mon–Sun 6am–11pm',
-    notes: 'Large format grocery and general merchandise; hosts WU, MoneyGram, Walmart Money Services. Phone: 305-913-8439'
-  },
-  {
-    id: 'eg_003',
-    category: 'ethnic_grocery',
     name: 'Bravo Supermarkets',
     address: '8700 NW 32nd Ave, Miami, FL 33147',
     lat: 25.8503,
@@ -376,7 +367,7 @@ const stores = [
     notes: 'Latin supermarket with broad Caribbean/Hispanic inventory. Phone: 305-696-9157'
   },
   {
-    id: 'eg_004',
+    id: 'eg_003',
     category: 'ethnic_grocery',
     name: "Sedano's Supermarket",
     address: '3140 NW 76th St, Miami, FL 33147',
@@ -388,7 +379,7 @@ const stores = [
     notes: "Cuban/Latin chain supermarket; popular with local Hispanic community. Phone: 305-403-6406. Note: Yelp shows CLOSED — verify before use"
   },
   {
-    id: 'eg_005',
+    id: 'eg_004',
     category: 'ethnic_grocery',
     name: 'El Shaddai Supermarket',
     address: '1944 NW 17th Ave, Miami, FL 33142',
@@ -397,10 +388,10 @@ const stores = [
     rating: 4.2,
     reviews: 38,
     hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
-    notes: 'Caribbean/Haitian-focused ethnic grocery; hosts Ria Money Transfer agent'
+    notes: 'Caribbean/Haitian-focused ethnic grocery; hosts Ria Money Transfer agent. Adjacent spillover — ZIP 33142 but within map range.'
   },
   {
-    id: 'eg_006',
+    id: 'eg_005',
     category: 'ethnic_grocery',
     name: 'Latin American Market',
     address: '2145 NW 62nd St, Miami, FL 33147',
@@ -412,7 +403,7 @@ const stores = [
     notes: 'Mid-zip Latin grocery; serves dense residential blocks along NW 62nd St corridor'
   },
   {
-    id: 'eg_007',
+    id: 'eg_006',
     category: 'ethnic_grocery',
     name: 'Caribbean Best Market',
     address: '7500 NW 22nd Ave, Miami, FL 33147',
@@ -424,7 +415,7 @@ const stores = [
     notes: 'Caribbean-focused grocery; stocks Jamaican, Haitian, Trinidadian products'
   },
   {
-    id: 'eg_008',
+    id: 'eg_007',
     category: 'ethnic_grocery',
     name: 'J G & T Caribbean Grocery',
     address: '6557 NW 17th Ave, Miami, FL 33147',
@@ -524,18 +515,6 @@ const stores = [
     notes: 'On NE corner of NW 62nd St & NW 22nd Ave; self-service and wash-and-fold. Phone: 786-452-0325'
   },
   {
-    id: 'lm_003',
-    category: 'laundromat',
-    name: 'Coin Laundry',
-    address: '1295 NW 103rd St, Miami, FL 33147',
-    lat: 25.8510,
-    lng: -80.2280,
-    rating: 3.9,
-    reviews: 12,
-    hours: 'Mon–Sun 7am–9pm',
-    notes: 'Near northern boundary; wheelchair accessible. Phone: 305-495-7858'
-  },
-  {
     id: 'lm_004',
     category: 'laundromat',
     name: 'Laundromat – NW 54th St',
@@ -545,7 +524,7 @@ const stores = [
     rating: 3.7,
     reviews: 8,
     hours: 'Mon–Sun 7am–9pm',
-    notes: 'Just south of 33147 boundary; serves Liberty City residents. Phone: 305-640-5239'
+    notes: 'Just south of 33147 boundary; serves Liberty City residents. Adjacent spillover — ZIP 33142 but within map range. Phone: 305-640-5239'
   },
   {
     id: 'lm_005',
