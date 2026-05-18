@@ -74,7 +74,7 @@
           <text x="534" y="260" fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 534 260)" text-anchor="middle">NW 7th Ave</text>
         </g>
         <!-- Zone ellipses rendered here by Task 7 -->
-        <g id="zones-layer" display="none"></g>
+        <g id="zones-layer"></g>
         <!-- Pins rendered here by Task 3 -->
         <g id="pins-layer"></g>
         <!-- Compass -->
@@ -676,6 +676,7 @@ function renderPins() {
 // ─── TOGGLE BUTTONS ───────────────────────────────────────────────────────────
 const activeToggles = new Set(Object.keys(CATEGORIES));
 activeToggles.add('zones_expand');
+activeToggles.add('zones_monitor');
 activeToggles.add('zones_reduce');
 
 function renderToggles() {
@@ -693,6 +694,7 @@ function renderToggles() {
   });
   [
     { key: 'zones_expand', label: '◎ Expansion Zones', border: '#3fb950', color: '#3fb950' },
+    { key: 'zones_monitor', label: '◎ Monitor Zones', border: '#f0c040', color: '#f0c040' },
     { key: 'zones_reduce', label: '◎ Saturation Zones', border: '#f85149', color: '#f85149' }
   ].forEach(({ key, label, border, color }) => {
     const btn = document.createElement('button');
@@ -801,9 +803,9 @@ function computeZones() {
 
 // ─── ZONE RENDERING ───────────────────────────────────────────────────────────
 const ZONE_CONFIG = {
-  zones_expand:  { fill: 'rgba(63,185,80,0.18)',  stroke: 'rgba(63,185,80,0.6)',  label: 'Underserved — Open Here' },
-  zones_monitor: { fill: 'rgba(240,192,64,0.18)', stroke: 'rgba(240,192,64,0.6)', label: 'High Demand — Monitor' },
-  zones_reduce:  { fill: 'rgba(248,81,73,0.18)',  stroke: 'rgba(248,81,73,0.6)',  label: 'WU Oversaturated — Review' }
+  zones_expand:  { stroke: 'rgba(63,185,80,0.6)',  label: 'Underserved — Open Here' },
+  zones_monitor: { stroke: 'rgba(240,192,64,0.6)', label: 'High Demand — Monitor' },
+  zones_reduce:  { stroke: 'rgba(248,81,73,0.6)',  label: 'WU Oversaturated — Review' }
 };
 
 function renderZones() {
