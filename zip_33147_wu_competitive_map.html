@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #0f1117; color: #e6edf3; min-height: 100vh; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0f1117; color: #e6edf3; min-height: 100vh; }
     #app { display: flex; flex-direction: column; min-height: 100vh; padding: 12px; gap: 10px; max-width: 1100px; margin: 0 auto; }
     #top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #1a1f2e; border-radius: 8px; }
     #logo { color: #F5C518; font-size: 18px; margin-right: 8px; }
@@ -49,8 +49,10 @@
     .scorecard-empty { font-size: 11px; color: #555; font-style: italic; }
     .narrative-header { font-size: 11px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
     .narrative-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .narrative-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
     .narrative-col-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
     .narrative-col.expand .narrative-col-title { color: #3fb950; }
+    .narrative-col.monitor .narrative-col-title { color: #f0c040; }
     .narrative-col.reduce  .narrative-col-title { color: #f85149; }
     .narrative-item { display: flex; gap: 10px; margin-bottom: 10px; }
     .narrative-rank { background: #2a3040; color: #ccc; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
@@ -154,7 +156,7 @@ const LOW_DEMAND_THRESHOLD  = 3;
 
 // ─── MAP BOUNDS ───────────────────────────────────────────────────────────────
 const MAP = {
-  latMin: 25.813, latMax: 25.851, latRange: 0.038,
+  latMin: 25.813, latMax: 25.853, latRange: 0.040,
   lngMin: -80.251, lngMax: -80.213, lngRange: 0.038,
   svgW: 700, svgH: 520
 };
@@ -975,12 +977,25 @@ function renderNarrative() {
       </div>
     </div>`).join('') || '<div class="narrative-empty">No saturation concerns with current thresholds.</div>';
 
+  const monitorRows = monitor.map((z, i) => `
+    <div class="narrative-item">
+      <div class="narrative-rank">${i + 1}</div>
+      <div>
+        <div class="narrative-item-title">Cluster at (${z.centroid.lat.toFixed(3)}, ${z.centroid.lng.toFixed(3)})</div>
+        <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} · ${z.members.length} demand signals · ${z.compBonus > 0 ? `+${z.compBonus} competitor validation` : 'No competitor nearby'} · ${z.wuCount} WU within ${WU_RADIUS_MI}mi</div>
+      </div>
+    </div>`).join('') || '<div class="narrative-empty">No monitor zones identified.</div>';
+
   document.getElementById('narrative').innerHTML = `
     <div class="narrative-header">COMPETITIVE INTELLIGENCE SUMMARY — ZIP 33147</div>
-    <div class="narrative-grid">
+    <div class="narrative-grid narrative-grid-3">
       <div class="narrative-col expand">
         <div class="narrative-col-title">▲ OPEN NEW LOCATIONS</div>
         ${expandRows}
+      </div>
+      <div class="narrative-col monitor">
+        <div class="narrative-col-title">⚠ MONITOR — HIGH DENSITY</div>
+        ${monitorRows}
       </div>
       <div class="narrative-col reduce">
         <div class="narrative-col-title">▼ REDUCE FOOTPRINT</div>
