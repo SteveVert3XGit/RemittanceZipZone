@@ -25,6 +25,17 @@
     #pin-placeholder { color: #555; font-size: 13px; }
     #scorecard { background: #1a1f2e; border-radius: 8px; padding: 14px; flex: 1; border: 1px solid #2a3040; }
     #narrative { background: #1a1f2e; border-radius: 8px; padding: 16px; border: 1px solid #2a3040; }
+    .pin { cursor: pointer; }
+    .toggle-btn { border: none; padding: 5px 11px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; background: #1a1f2e; transition: opacity 0.15s; }
+    .zone-toggle { background: #1a1f2e !important; }
+    .toggle-btn:hover { filter: brightness(1.1); }
+    .pin-category-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .pin-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .pin-address { font-size: 11px; color: #8b949e; margin-bottom: 6px; }
+    .pin-meta { font-size: 12px; color: #ccc; margin-bottom: 3px; }
+    .pin-notes { font-size: 11px; color: #79c0ff; margin: 6px 0; font-style: italic; }
+    .pin-maps-link { display: inline-block; margin-top: 10px; font-size: 12px; color: #79c0ff; text-decoration: none; }
+    .pin-maps-link:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -616,6 +627,133 @@ const stores = [
   }
 
 ];
+
+// ─── COORDINATE HELPER ────────────────────────────────────────────────────────
+function latLngToSVG(lat, lng) {
+  return {
+    x: ((lng - MAP.lngMin) / MAP.lngRange) * MAP.svgW,
+    y: (1 - (lat - MAP.latMin) / MAP.latRange) * MAP.svgH
+  };
+}
+
+// ─── PIN RENDERING ────────────────────────────────────────────────────────────
+function renderPins() {
+  const layer = document.getElementById('pins-layer');
+  layer.innerHTML = '';
+  stores.forEach(s => {
+    const cfg = CATEGORIES[s.category];
+    if (!cfg) return;
+    const { x, y } = latLngToSVG(s.lat, s.lng);
+    const r = cfg.r;
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('data-id', s.id);
+    g.setAttribute('data-cat', s.category);
+    g.setAttribute('class', 'pin');
+    g.style.cursor = 'pointer';
+    // Drop shape (triangle below circle)
+    const drop = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    const tipY = y + r + 8;
+    drop.setAttribute('points', `${x - r * 0.5},${y + r * 0.6} ${x + r * 0.5},${y + r * 0.6} ${x},${tipY}`);
+    drop.setAttribute('fill', cfg.color);
+    // Circle
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', cfg.color);
+    circle.setAttribute('stroke', '#0f1117');
+    circle.setAttribute('stroke-width', '1.5');
+    g.appendChild(drop);
+    g.appendChild(circle);
+    g.addEventListener('mouseenter', () => g.style.filter = 'brightness(1.25)');
+    g.addEventListener('mouseleave', () => g.style.filter = '');
+    g.addEventListener('click', () => showPin(s));
+    layer.appendChild(g);
+  });
+}
+
+// ─── TOGGLE BUTTONS ───────────────────────────────────────────────────────────
+const activeToggles = new Set(Object.keys(CATEGORIES));
+activeToggles.add('zones_expand');
+activeToggles.add('zones_reduce');
+
+function renderToggles() {
+  const bar = document.getElementById('toggle-bar');
+  bar.innerHTML = '';
+  Object.entries(CATEGORIES).forEach(([cat, cfg]) => {
+    const btn = document.createElement('button');
+    btn.className = 'toggle-btn';
+    btn.dataset.cat = cat;
+    btn.textContent = '● ' + cfg.label;
+    btn.style.background = cfg.color;
+    btn.style.color = cfg.role === 'primary' ? '#000' : '#fff';
+    btn.addEventListener('click', () => toggleCategory(cat, btn));
+    bar.appendChild(btn);
+  });
+  [
+    { key: 'zones_expand', label: '◎ Expansion Zones', border: '#3fb950', color: '#3fb950' },
+    { key: 'zones_reduce', label: '◎ Saturation Zones', border: '#f85149', color: '#f85149' }
+  ].forEach(({ key, label, border, color }) => {
+    const btn = document.createElement('button');
+    btn.className = 'toggle-btn zone-toggle';
+    btn.dataset.cat = key;
+    btn.textContent = label;
+    btn.style.border = `1px solid ${border}`;
+    btn.style.color = color;
+    btn.addEventListener('click', () => toggleZones(key, btn));
+    bar.appendChild(btn);
+  });
+}
+
+function toggleCategory(cat, btn) {
+  if (activeToggles.has(cat)) {
+    activeToggles.delete(cat);
+    btn.style.opacity = '0.35';
+  } else {
+    activeToggles.add(cat);
+    btn.style.opacity = '1';
+  }
+  document.querySelectorAll(`.pin[data-cat="${cat}"]`).forEach(el => {
+    el.style.display = activeToggles.has(cat) ? '' : 'none';
+  });
+}
+
+function toggleZones(key, btn) {
+  if (activeToggles.has(key)) {
+    activeToggles.delete(key);
+    btn.style.opacity = '0.35';
+  } else {
+    activeToggles.add(key);
+    btn.style.opacity = '1';
+  }
+  document.querySelectorAll(`.zone-ellipse[data-type="${key}"]`).forEach(el => {
+    el.style.display = activeToggles.has(key) ? '' : 'none';
+  });
+}
+
+// ─── PIN DETAIL PANEL ─────────────────────────────────────────────────────────
+function showPin(store) {
+  const cfg = CATEGORIES[store.category];
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.name + ' ' + store.address)}`;
+  const stars = store.rating ? `⭐ ${store.rating} · ${store.reviews} reviews` : '';
+  const hours = store.hours ? `🕐 ${store.hours}` : '';
+  const notes = store.notes ? `<div class="pin-notes">${store.notes}</div>` : '';
+  document.getElementById('pin-detail').innerHTML = `
+    <div class="pin-category-badge" style="background:${cfg.color};color:${cfg.role==='primary'?'#000':'#fff'}">${cfg.label}</div>
+    <div class="pin-name">${store.name}</div>
+    <div class="pin-address">${store.address}</div>
+    ${stars ? `<div class="pin-meta">${stars}</div>` : ''}
+    ${hours ? `<div class="pin-meta">${hours}</div>` : ''}
+    ${notes}
+    <a class="pin-maps-link" href="${mapsUrl}" target="_blank" rel="noopener">↗ Open in Google Maps</a>
+  `;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderToggles();
+  renderPins();
+});
 </script>
 </body>
 </html>
