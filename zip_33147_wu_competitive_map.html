@@ -51,16 +51,16 @@
           <line x1="0"   y1="520" x2="700" y2="520" stroke="#2a3340" stroke-width="2"/>
           <!-- N/S streets -->
           <line x1="37"  y1="0"   x2="37"  y2="520" stroke="#2a3340" stroke-width="3"/>
-          <line x1="258" y1="0"   x2="258" y2="520" stroke="#2a3340" stroke-width="2"/>
-          <line x1="479" y1="0"   x2="479" y2="520" stroke="#2a3340" stroke-width="3"/>
+          <line x1="313" y1="0"   x2="313" y2="520" stroke="#2a3340" stroke-width="2"/>
+          <line x1="534" y1="0"   x2="534" y2="520" stroke="#2a3340" stroke-width="3"/>
           <!-- Street labels -->
           <text x="42"  y="23"  fill="#3a4a5a" font-size="9" font-family="monospace">NW 79th St</text>
           <text x="42"  y="201" fill="#3a4a5a" font-size="9" font-family="monospace">NW 62nd St</text>
           <text x="42"  y="283" fill="#3a4a5a" font-size="9" font-family="monospace">NW 54th St</text>
           <text x="42"  y="516" fill="#3a4a5a" font-size="9" font-family="monospace">NW 36th St</text>
-          <text x="0"   y="16"  fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 39 120)" text-anchor="middle">NW 27th Ave</text>
-          <text x="0"   y="16"  fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 260 120)" text-anchor="middle">NW 17th Ave</text>
-          <text x="0"   y="16"  fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 481 120)" text-anchor="middle">NW 7th Ave</text>
+          <text x="37"  y="260" fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 37 260)"  text-anchor="middle">NW 27th Ave</text>
+          <text x="313" y="260" fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 313 260)" text-anchor="middle">NW 17th Ave</text>
+          <text x="534" y="260" fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 534 260)" text-anchor="middle">NW 7th Ave</text>
         </g>
         <!-- Zone ellipses rendered here by Task 7 -->
         <g id="zones-layer" display="none"></g>
@@ -87,6 +87,8 @@
   <div id="narrative"><!-- populated by Task 9 --></div>
 </div>
 <script>
+function exportPDF() { /* wired in Task 10 */ }
+
 // ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
 const CLUSTER_RADIUS_MI     = 0.3;
 const COMPETITOR_RADIUS_MI  = 0.5;
