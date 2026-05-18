@@ -631,8 +631,8 @@ const stores = [
 // ─── COORDINATE HELPER ────────────────────────────────────────────────────────
 function latLngToSVG(lat, lng) {
   return {
-    x: ((lng - MAP.lngMin) / MAP.lngRange) * MAP.svgW,
-    y: (1 - (lat - MAP.latMin) / MAP.latRange) * MAP.svgH
+    x: Math.min(MAP.svgW, Math.max(0, ((lng - MAP.lngMin) / MAP.lngRange) * MAP.svgW)),
+    y: Math.min(MAP.svgH, Math.max(0, (1 - (lat - MAP.latMin) / MAP.latRange) * MAP.svgH))
   };
 }
 
@@ -669,6 +669,7 @@ function renderPins() {
     g.addEventListener('mouseleave', () => g.style.filter = '');
     g.addEventListener('click', () => showPin(s));
     layer.appendChild(g);
+    if (!activeToggles.has(s.category)) g.style.display = 'none';
   });
 }
 
