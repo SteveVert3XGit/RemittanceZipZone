@@ -9,9 +9,83 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: #0f1117; color: #e6edf3; min-height: 100vh; }
+    #app { display: flex; flex-direction: column; min-height: 100vh; padding: 12px; gap: 10px; max-width: 1100px; margin: 0 auto; }
+    #top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #1a1f2e; border-radius: 8px; }
+    #logo { color: #F5C518; font-size: 18px; margin-right: 8px; }
+    #title-text { font-weight: 700; font-size: 15px; }
+    #zip-label { color: #666; font-weight: 400; font-size: 13px; margin-left: 8px; }
+    #pdf-btn { background: #2a2a2a; color: #ccc; border: 1px solid #444; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+    #pdf-btn:hover { background: #333; }
+    #toggle-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+    #main-content { display: grid; grid-template-columns: 1fr 280px; gap: 10px; }
+    #map-wrap { background: #111927; border-radius: 10px; overflow: hidden; }
+    #map-svg { width: 100%; height: auto; display: block; }
+    #right-panel { display: flex; flex-direction: column; gap: 8px; }
+    #pin-detail { background: #1a1f2e; border-radius: 8px; padding: 14px; min-height: 120px; border: 1px solid #2a3040; }
+    #pin-placeholder { color: #555; font-size: 13px; }
+    #scorecard { background: #1a1f2e; border-radius: 8px; padding: 14px; flex: 1; border: 1px solid #2a3040; }
+    #narrative { background: #1a1f2e; border-radius: 8px; padding: 16px; border: 1px solid #2a3040; }
   </style>
 </head>
 <body>
+<div id="app">
+  <header id="top-bar">
+    <div id="title-block">
+      <span id="logo">⬡</span>
+      <span id="title-text">WU Competitive Intel <span id="zip-label">ZIP 33147 — NW Miami</span></span>
+    </div>
+    <button id="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
+  </header>
+
+  <div id="toggle-bar"><!-- populated by JS in Task 4 --></div>
+
+  <div id="main-content">
+    <div id="map-wrap">
+      <svg id="map-svg" viewBox="0 0 700 520" xmlns="http://www.w3.org/2000/svg">
+        <!-- Street grid -->
+        <g id="streets">
+          <!-- E/W streets -->
+          <line x1="0"   y1="27"  x2="700" y2="27"  stroke="#2a3340" stroke-width="3"/>
+          <line x1="0"   y1="205" x2="700" y2="205" stroke="#2a3340" stroke-width="3"/>
+          <line x1="0"   y1="287" x2="700" y2="287" stroke="#2a3340" stroke-width="2"/>
+          <line x1="0"   y1="520" x2="700" y2="520" stroke="#2a3340" stroke-width="2"/>
+          <!-- N/S streets -->
+          <line x1="37"  y1="0"   x2="37"  y2="520" stroke="#2a3340" stroke-width="3"/>
+          <line x1="258" y1="0"   x2="258" y2="520" stroke="#2a3340" stroke-width="2"/>
+          <line x1="479" y1="0"   x2="479" y2="520" stroke="#2a3340" stroke-width="3"/>
+          <!-- Street labels -->
+          <text x="42"  y="23"  fill="#3a4a5a" font-size="9" font-family="monospace">NW 79th St</text>
+          <text x="42"  y="201" fill="#3a4a5a" font-size="9" font-family="monospace">NW 62nd St</text>
+          <text x="42"  y="283" fill="#3a4a5a" font-size="9" font-family="monospace">NW 54th St</text>
+          <text x="42"  y="516" fill="#3a4a5a" font-size="9" font-family="monospace">NW 36th St</text>
+          <text x="0"   y="16"  fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 39 120)" text-anchor="middle">NW 27th Ave</text>
+          <text x="0"   y="16"  fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 260 120)" text-anchor="middle">NW 17th Ave</text>
+          <text x="0"   y="16"  fill="#3a4a5a" font-size="9" font-family="monospace" transform="rotate(-90 481 120)" text-anchor="middle">NW 7th Ave</text>
+        </g>
+        <!-- Zone ellipses rendered here by Task 7 -->
+        <g id="zones-layer" display="none"></g>
+        <!-- Pins rendered here by Task 3 -->
+        <g id="pins-layer"></g>
+        <!-- Compass -->
+        <g transform="translate(660,480)">
+          <circle r="14" fill="#1a1f2e" stroke="#2a3040"/>
+          <text x="0" y="-4" text-anchor="middle" fill="#79c0ff" font-size="10" font-weight="bold">N</text>
+          <line x1="0" y1="-12" x2="0" y2="12" stroke="#444" stroke-width="1"/>
+          <line x1="-12" y1="0" x2="12" y2="0" stroke="#444" stroke-width="1"/>
+        </g>
+      </svg>
+    </div>
+
+    <div id="right-panel">
+      <div id="pin-detail">
+        <p id="pin-placeholder">Click any pin to see details</p>
+      </div>
+      <div id="scorecard"><!-- populated by Task 8 --></div>
+    </div>
+  </div>
+
+  <div id="narrative"><!-- populated by Task 9 --></div>
+</div>
 <script>
 // ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
 const CLUSTER_RADIUS_MI     = 0.3;
