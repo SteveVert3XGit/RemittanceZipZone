@@ -126,6 +126,10 @@
 </div>
 <script>
 function exportPDF() {
+  if (typeof html2pdf === 'undefined') {
+    alert('PDF export unavailable — library failed to load. Check your internet connection.');
+    return;
+  }
   const btn = document.getElementById('pdf-btn');
   btn.textContent = 'Generating...';
   btn.disabled = true;
@@ -137,7 +141,8 @@ function exportPDF() {
     jsPDF:       { unit: 'mm', format: 'a4', orientation: 'landscape' }
   };
   html2pdf().set(opt).from(document.getElementById('app')).save()
-    .then(() => { btn.textContent = '⬇ Export PDF'; btn.disabled = false; });
+    .then(() => { btn.textContent = '⬇ Export PDF'; btn.disabled = false; })
+    .catch(() => { btn.textContent = '⬇ Export PDF'; btn.disabled = false; alert('PDF export failed. Check your connection.'); });
 }
 
 // ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
@@ -804,7 +809,9 @@ function haversine(lat1, lng1, lat2, lng2) {
 }
 
 // ─── ZONE COMPUTATION ─────────────────────────────────────────────────────────
+let _zonesCache = null;
 function computeZones() {
+  if (_zonesCache) return _zonesCache;
   const demandStores = stores.filter(s => DEMAND_WEIGHTS[s.category] !== undefined);
   const competitors  = stores.filter(s => s.category === 'moneygram' || s.category === 'ria');
   const wuStores     = stores.filter(s => s.category === 'western_union');
@@ -838,7 +845,8 @@ function computeZones() {
     clusters.push({ centroid, members, adjDemand, wuCount, type, compBonus });
   });
 
-  return clusters.filter(c => c.type !== null);
+  _zonesCache = clusters.filter(c => c.type !== null);
+  return _zonesCache;
 }
 
 // ─── ZONE RENDERING ───────────────────────────────────────────────────────────
