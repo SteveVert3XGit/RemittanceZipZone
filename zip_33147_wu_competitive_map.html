@@ -799,10 +799,75 @@ function computeZones() {
   return clusters.filter(c => c.type !== null);
 }
 
+// ─── ZONE RENDERING ───────────────────────────────────────────────────────────
+const ZONE_CONFIG = {
+  zones_expand:  { fill: 'rgba(63,185,80,0.18)',  stroke: 'rgba(63,185,80,0.6)',  label: 'Underserved — Open Here' },
+  zones_monitor: { fill: 'rgba(240,192,64,0.18)', stroke: 'rgba(240,192,64,0.6)', label: 'High Demand — Monitor' },
+  zones_reduce:  { fill: 'rgba(248,81,73,0.18)',  stroke: 'rgba(248,81,73,0.6)',  label: 'WU Oversaturated — Review' }
+};
+
+function renderZones() {
+  const layer = document.getElementById('zones-layer');
+  layer.innerHTML = '';
+
+  let defs = document.getElementById('zone-defs');
+  if (!defs) {
+    defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    defs.id = 'zone-defs';
+    document.getElementById('map-svg').insertBefore(defs, layer);
+  }
+  defs.innerHTML = '';
+
+  const zones = computeZones();
+  zones.forEach((zone, i) => {
+    const cfg = ZONE_CONFIG[zone.type];
+    if (!cfg) return;
+    const { x, y } = latLngToSVG(zone.centroid.lat, zone.centroid.lng);
+    const rx = Math.max(40, 40 + zone.members.length * 8);
+    const ry = rx * 0.65;
+
+    const gradId = `zone-grad-${i}`;
+    const grad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+    grad.setAttribute('id', gradId);
+    grad.innerHTML = `
+      <stop offset="0%"   stop-color="${cfg.stroke}" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="${cfg.stroke}" stop-opacity="0"/>
+    `;
+    defs.appendChild(grad);
+
+    const ellipse = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+    ellipse.setAttribute('cx', x);
+    ellipse.setAttribute('cy', y);
+    ellipse.setAttribute('rx', rx);
+    ellipse.setAttribute('ry', ry);
+    ellipse.setAttribute('fill', `url(#${gradId})`);
+    ellipse.setAttribute('stroke', cfg.stroke);
+    ellipse.setAttribute('stroke-width', '1');
+    ellipse.setAttribute('class', 'zone-ellipse');
+    ellipse.setAttribute('data-type', zone.type);
+    if (!activeToggles.has(zone.type)) ellipse.style.display = 'none';
+    layer.appendChild(ellipse);
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y - ry - 5);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', cfg.stroke);
+    text.setAttribute('font-size', '9');
+    text.setAttribute('font-family', 'monospace');
+    text.setAttribute('class', 'zone-ellipse');
+    text.setAttribute('data-type', zone.type);
+    text.textContent = cfg.label;
+    if (!activeToggles.has(zone.type)) text.style.display = 'none';
+    layer.appendChild(text);
+  });
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   renderToggles();
   renderPins();
+  renderZones();
 });
 </script>
 </body>
