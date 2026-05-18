@@ -36,6 +36,33 @@
     .pin-notes { font-size: 11px; color: #79c0ff; margin: 6px 0; font-style: italic; }
     .pin-maps-link { display: inline-block; margin-top: 10px; font-size: 12px; color: #79c0ff; text-decoration: none; }
     .pin-maps-link:hover { text-decoration: underline; }
+    .scorecard-label { font-size: 10px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .scorecard-section { margin-bottom: 10px; }
+    .scorecard-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .scorecard-section.expand .scorecard-title { color: #3fb950; }
+    .scorecard-section.monitor .scorecard-title { color: #f0c040; }
+    .scorecard-section.reduce  .scorecard-title { color: #f85149; }
+    .scorecard-row { font-size: 11px; color: #ccc; padding: 2px 0 2px 8px; }
+    .scorecard-sub { font-size: 10px; color: #666; }
+    .scorecard-counts { border-top: 1px solid #2a3040; padding-top: 10px; margin-top: 8px; }
+    .count-row { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; padding: 2px 0; }
+    .scorecard-empty { font-size: 11px; color: #555; font-style: italic; }
+    .narrative-header { font-size: 11px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .narrative-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .narrative-col-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+    .narrative-col.expand .narrative-col-title { color: #3fb950; }
+    .narrative-col.reduce  .narrative-col-title { color: #f85149; }
+    .narrative-item { display: flex; gap: 10px; margin-bottom: 10px; }
+    .narrative-rank { background: #2a3040; color: #ccc; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .narrative-item-title { font-size: 12px; font-weight: 600; color: #e6edf3; margin-bottom: 2px; }
+    .narrative-item-desc { font-size: 11px; color: #8b949e; line-height: 1.5; }
+    .narrative-empty { font-size: 12px; color: #555; font-style: italic; }
+    .narrative-context { font-size: 12px; color: #8b949e; line-height: 1.7; border-top: 1px solid #2a3040; padding-top: 12px; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f1117; }
+    ::-webkit-scrollbar-thumb { background: #2a3040; border-radius: 3px; }
+    @media (max-width: 800px) { #main-content { grid-template-columns: 1fr; } #right-panel { display: none; } }
+    @media print { #toggle-bar { display: none; } #pdf-btn { display: none; } }
   </style>
 </head>
 <body>
@@ -98,7 +125,20 @@
   <div id="narrative"><!-- populated by Task 9 --></div>
 </div>
 <script>
-function exportPDF() { /* wired in Task 10 */ }
+function exportPDF() {
+  const btn = document.getElementById('pdf-btn');
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+  const opt = {
+    margin:      [8, 8],
+    filename:    'wu_competitive_intel_33147.pdf',
+    image:       { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF:       { unit: 'mm', format: 'a4', orientation: 'landscape' }
+  };
+  html2pdf().set(opt).from(document.getElementById('app')).save()
+    .then(() => { btn.textContent = '⬇ Export PDF'; btn.disabled = false; });
+}
 
 // ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
 const CLUSTER_RADIUS_MI     = 0.3;
@@ -865,11 +905,98 @@ function renderZones() {
   });
 }
 
+// ─── SCORECARD ────────────────────────────────────────────────────────────────
+function renderScorecard() {
+  const zones = computeZones();
+  const expand  = zones.filter(z => z.type === 'zones_expand');
+  const monitor = zones.filter(z => z.type === 'zones_monitor');
+  const reduce  = zones.filter(z => z.type === 'zones_reduce');
+
+  const wuCount  = stores.filter(s => s.category === 'western_union').length;
+  const mgCount  = stores.filter(s => s.category === 'moneygram').length;
+  const riaCount = stores.filter(s => s.category === 'ria').length;
+
+  const zoneRow = (zone, idx) => `
+    <div class="scorecard-row">
+      <strong>${idx + 1}.</strong> ${zone.centroid.lat.toFixed(4)}, ${zone.centroid.lng.toFixed(4)}
+      <div class="scorecard-sub">Demand: ${zone.adjDemand} · WU nearby: ${zone.wuCount} · ${zone.members.length} signals</div>
+    </div>`;
+
+  document.getElementById('scorecard').innerHTML = `
+    <div class="scorecard-label">ZONE ANALYSIS</div>
+    ${expand.length ? `<div class="scorecard-section expand"><div class="scorecard-title">▲ EXPAND (${expand.length})</div>${expand.map(zoneRow).join('')}</div>` : ''}
+    ${monitor.length ? `<div class="scorecard-section monitor"><div class="scorecard-title">⚠ MONITOR (${monitor.length})</div>${monitor.map(zoneRow).join('')}</div>` : ''}
+    ${reduce.length ? `<div class="scorecard-section reduce"><div class="scorecard-title">▼ REDUCE (${reduce.length})</div>${reduce.map(zoneRow).join('')}</div>` : ''}
+    ${!expand.length && !monitor.length && !reduce.length ? '<div class="scorecard-empty">No zones detected with current thresholds.</div>' : ''}
+    <div class="scorecard-counts">
+      <div class="scorecard-label" style="margin-top:10px;margin-bottom:6px">PROVIDER COUNT</div>
+      <div class="count-row"><span style="color:#F5C518">●</span> Western Union <strong>${wuCount}</strong></div>
+      <div class="count-row"><span style="color:#004B87">●</span> MoneyGram <strong>${mgCount}</strong></div>
+      <div class="count-row"><span style="color:#E31837">●</span> Ria <strong>${riaCount}</strong></div>
+    </div>
+  `;
+}
+
+// ─── NARRATIVE ────────────────────────────────────────────────────────────────
+function renderNarrative() {
+  const zones = computeZones();
+  const expand  = zones.filter(z => z.type === 'zones_expand');
+  const monitor = zones.filter(z => z.type === 'zones_monitor');
+  const reduce  = zones.filter(z => z.type === 'zones_reduce');
+
+  const wuCount  = stores.filter(s => s.category === 'western_union').length;
+  const mgCount  = stores.filter(s => s.category === 'moneygram').length;
+  const riaCount = stores.filter(s => s.category === 'ria').length;
+  const totalSignals = stores.filter(s => DEMAND_WEIGHTS[s.category] !== undefined).length;
+
+  const expandRows = expand.map((z, i) => `
+    <div class="narrative-item">
+      <div class="narrative-rank">${i + 1}</div>
+      <div>
+        <div class="narrative-item-title">Cluster at (${z.centroid.lat.toFixed(3)}, ${z.centroid.lng.toFixed(3)})</div>
+        <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} · ${z.members.length} demand signals · ${z.compBonus > 0 ? `+${z.compBonus} competitor validation` : 'No competitor nearby'} · 0 WU within ${WU_RADIUS_MI}mi</div>
+      </div>
+    </div>`).join('') || '<div class="narrative-empty">No expansion zones identified with current thresholds.</div>';
+
+  const reduceRows = reduce.map((z, i) => `
+    <div class="narrative-item">
+      <div class="narrative-rank">${i + 1}</div>
+      <div>
+        <div class="narrative-item-title">Cluster at (${z.centroid.lat.toFixed(3)}, ${z.centroid.lng.toFixed(3)})</div>
+        <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} (below threshold of ${LOW_DEMAND_THRESHOLD}) · ${z.wuCount} WU within ${WU_RADIUS_MI}mi · Low market justification for WU density</div>
+      </div>
+    </div>`).join('') || '<div class="narrative-empty">No saturation concerns with current thresholds.</div>';
+
+  document.getElementById('narrative').innerHTML = `
+    <div class="narrative-header">COMPETITIVE INTELLIGENCE SUMMARY — ZIP 33147</div>
+    <div class="narrative-grid">
+      <div class="narrative-col expand">
+        <div class="narrative-col-title">▲ OPEN NEW LOCATIONS</div>
+        ${expandRows}
+      </div>
+      <div class="narrative-col reduce">
+        <div class="narrative-col-title">▼ REDUCE FOOTPRINT</div>
+        ${reduceRows}
+      </div>
+    </div>
+    <div class="narrative-context">
+      ZIP 33147 has ${wuCount + mgCount + riaCount} remittance locations across 3 providers.
+      Western Union: ${wuCount} · MoneyGram: ${mgCount} · Ria: ${riaCount}.
+      ${totalSignals} demand-signal businesses mapped (ethnic groceries, financial services, dollar stores, laundromats).
+      ${expand.length > 0 ? `${expand.length} expansion zone${expand.length > 1 ? 's' : ''} identified — high demand, no WU coverage.` : 'No clear expansion gaps identified.'}
+      ${monitor.length > 0 ? `${monitor.length} monitor zone${monitor.length > 1 ? 's' : ''} flagged — high demand with multiple WU locations; watch for competitor entry.` : ''}
+      ${reduce.length > 0 ? `${reduce.length} saturation zone${reduce.length > 1 ? 's' : ''} flagged — WU density exceeds demand justification.` : 'No saturation concerns identified.'}
+    </div>
+  `;
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   renderToggles();
   renderPins();
   renderZones();
+  renderScorecard();
+  renderNarrative();
 });
 </script>
 </body>
