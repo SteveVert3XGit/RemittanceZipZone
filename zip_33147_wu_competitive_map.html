@@ -25,12 +25,25 @@
     #pin-placeholder { color: #555; font-size: 13px; }
     #scorecard { background: #1a1f2e; border-radius: 8px; padding: 14px; flex: 1; border: 1px solid #2a3040; }
     #narrative { background: #1a1f2e; border-radius: 8px; padding: 16px; border: 1px solid #2a3040; }
+    #demographics { background: #1a1f2e; border-radius: 8px; padding: 16px; border: 1px solid #2a3040; }
+    .demo-header { font-size: 11px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .demo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .demo-card { background: #0d1117; border-radius: 6px; padding: 12px; border: 1px solid #2a3040; }
+    .demo-card-label { font-size: 10px; color: #666; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .demo-card-value { font-size: 20px; font-weight: 700; color: #e6edf3; line-height: 1.1; }
+    .demo-card-sub { font-size: 11px; color: #8b949e; margin-top: 3px; }
+    .demo-card.highlight .demo-card-value { color: #F5C518; }
+    .demo-diaspora-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .demo-diaspora-item { background: #0d1117; border-radius: 6px; padding: 10px 12px; border: 1px solid #2a3040; display: flex; justify-content: space-between; align-items: center; }
+    .demo-diaspora-name { font-size: 12px; color: #ccc; }
+    .demo-diaspora-pct { font-size: 14px; font-weight: 700; color: #79c0ff; }
+    .demo-context { font-size: 12px; color: #8b949e; line-height: 1.7; border-top: 1px solid #2a3040; padding-top: 12px; }
     .pin { cursor: pointer; }
     .toggle-btn { border: none; padding: 5px 11px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; background: #1a1f2e; transition: opacity 0.15s; }
     .zone-toggle { background: #1a1f2e !important; }
     .toggle-btn:hover { filter: brightness(1.1); }
-    .pin-category-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
-    .pin-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .pin-category-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+    .pin-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; color: #e6edf3; }
     .pin-address { font-size: 11px; color: #8b949e; margin-bottom: 6px; }
     .pin-meta { font-size: 12px; color: #ccc; margin-bottom: 3px; }
     .pin-notes { font-size: 11px; color: #79c0ff; margin: 6px 0; font-style: italic; }
@@ -125,6 +138,65 @@
   </div>
 
   <div id="narrative"><!-- populated by Task 9 --></div>
+
+  <div id="demographics">
+    <div class="demo-header">ZIP 33147 · Population Profile · Source: U.S. Census ACS 2019–2023</div>
+
+    <div class="demo-grid">
+      <div class="demo-card">
+        <div class="demo-card-label">Total Population</div>
+        <div class="demo-card-value">~35,200</div>
+        <div class="demo-card-sub">Liberty City / NW Miami</div>
+      </div>
+      <div class="demo-card highlight">
+        <div class="demo-card-label">Foreign-Born</div>
+        <div class="demo-card-value">38%</div>
+        <div class="demo-card-sub">~13,400 residents</div>
+      </div>
+      <div class="demo-card highlight">
+        <div class="demo-card-label">Est. Unbanked Rate</div>
+        <div class="demo-card-value">~35%</div>
+        <div class="demo-card-sub">vs. 5.9% national avg</div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-card-label">Poverty Rate</div>
+        <div class="demo-card-value">33%</div>
+        <div class="demo-card-sub">Median HHI $28,500</div>
+      </div>
+    </div>
+
+    <div class="demo-header" style="margin-top:4px">Diaspora Concentration</div>
+    <div class="demo-diaspora-grid">
+      <div class="demo-diaspora-item">
+        <span class="demo-diaspora-name">Haitian</span>
+        <span class="demo-diaspora-pct">~22%</span>
+      </div>
+      <div class="demo-diaspora-item">
+        <span class="demo-diaspora-name">Black / African American</span>
+        <span class="demo-diaspora-pct">~68%</span>
+      </div>
+      <div class="demo-diaspora-item">
+        <span class="demo-diaspora-name">Hispanic / Latino</span>
+        <span class="demo-diaspora-pct">~27%</span>
+      </div>
+      <div class="demo-diaspora-item">
+        <span class="demo-diaspora-name">Cuban</span>
+        <span class="demo-diaspora-pct">~8%</span>
+      </div>
+      <div class="demo-diaspora-item">
+        <span class="demo-diaspora-name">Caribbean (other)</span>
+        <span class="demo-diaspora-pct">~6%</span>
+      </div>
+      <div class="demo-diaspora-item">
+        <span class="demo-diaspora-name">Per Capita Income</span>
+        <span class="demo-diaspora-pct">$11,800</span>
+      </div>
+    </div>
+
+    <div class="demo-context">
+      ZIP 33147 is one of Miami's highest-density remittance corridors. The Haitian diaspora (~22%) is the dominant transnational sender group, with strong ties to Port-au-Prince and Croix-des-Bouquets. A high unbanked rate (~35%) means cash-based remittance services — not digital apps — remain the primary channel. Low median household income ($28,500) and high poverty (33%) reinforce reliance on informal and agent-based transfer networks. The concentration of foreign-born residents combined with limited bank access creates sustained, recurring demand for in-person remittance locations.
+    </div>
+  </div>
 </div>
 <script>
 function exportPDF() {
@@ -148,9 +220,10 @@ function exportPDF() {
 }
 
 // ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
-const CLUSTER_RADIUS_MI     = 0.3;
-const COMPETITOR_RADIUS_MI  = 0.5;
-const WU_RADIUS_MI          = 0.5;
+const CLUSTER_RADIUS_MI          = 0.3;
+const COMPETITOR_RADIUS_MI       = 0.5;
+const WU_RADIUS_MI               = 0.5;
+const WU_CANNIBALIZATION_RADIUS_MI = 0.3;
 const HIGH_DEMAND_THRESHOLD = 6;
 const LOW_DEMAND_THRESHOLD  = 3;
 
@@ -164,8 +237,8 @@ const MAP = {
 // ─── CATEGORY CONFIG ──────────────────────────────────────────────────────────
 const CATEGORIES = {
   western_union:      { label: 'Western Union',  color: '#F5C518', role: 'primary',       r: 14 },
-  moneygram:          { label: 'MoneyGram',       color: '#004B87', role: 'primary',       r: 14 },
-  ria:                { label: 'Ria',             color: '#E31837', role: 'primary',       r: 14 },
+  moneygram:          { label: 'MoneyGram',       color: '#E31837', role: 'primary',       r: 14 },
+  ria:                { label: 'Ria',             color: '#F97316', role: 'primary',       r: 14 },
   financial_services: { label: 'Financial Svcs', color: '#1D9E75', role: 'demand_signal', r: 8  },
   ethnic_grocery:     { label: 'Ethnic Grocery', color: '#9B59B6', role: 'demand_signal', r: 8  },
   dollar_store:       { label: 'Dollar Store',   color: '#E91E8C', role: 'demand_signal', r: 8  },
@@ -789,8 +862,8 @@ function showPin(store) {
   const hours = store.hours ? `🕐 ${store.hours}` : '';
   const notes = store.notes ? `<div class="pin-notes">${store.notes}</div>` : '';
   document.getElementById('pin-detail').innerHTML = `
-    <div class="pin-category-badge" style="background:${cfg.color};color:${cfg.role==='primary'?'#000':'#fff'}">${cfg.label}</div>
     <div class="pin-name">${store.name}</div>
+    <div class="pin-category-badge" style="background:${cfg.color};color:${cfg.role==='primary'?'#000':'#fff'}">${cfg.label}</div>
     <div class="pin-address">${store.address}</div>
     ${stars ? `<div class="pin-meta">${stars}</div>` : ''}
     ${hours ? `<div class="pin-meta">${hours}</div>` : ''}
@@ -845,6 +918,34 @@ function computeZones() {
     else if (adjDemand < LOW_DEMAND_THRESHOLD  && wuCount >= 2) type = 'zones_reduce';
 
     clusters.push({ centroid, members, adjDemand, wuCount, type, compBonus });
+  });
+
+  // Second pass: seed from WU positions to catch self-cannibalization clusters
+  // that have no nearby demand signals (so they'd never appear in pass 1)
+  const wuVisited = new Set();
+  wuStores.forEach(seed => {
+    if (wuVisited.has(seed.id)) return;
+    const wuCluster = wuStores.filter(w =>
+      haversine(seed.lat, seed.lng, w.lat, w.lng) <= WU_CANNIBALIZATION_RADIUS_MI
+    );
+    wuCluster.forEach(w => wuVisited.add(w.id));
+    if (wuCluster.length < 2) return;
+    const centroid = {
+      lat: wuCluster.reduce((sum, w) => sum + w.lat, 0) / wuCluster.length,
+      lng: wuCluster.reduce((sum, w) => sum + w.lng, 0) / wuCluster.length
+    };
+    const nearbyDemand = demandStores.filter(s =>
+      haversine(centroid.lat, centroid.lng, s.lat, s.lng) <= CLUSTER_RADIUS_MI
+    );
+    const baseScore = nearbyDemand.reduce((sum, s) => sum + (DEMAND_WEIGHTS[s.category] || 0), 0);
+    const compBonus = competitors.filter(c =>
+      haversine(centroid.lat, centroid.lng, c.lat, c.lng) <= COMPETITOR_RADIUS_MI
+    ).length * COMPETITOR_BONUS;
+    const adjDemand = baseScore + compBonus;
+    // 3+ WU in tight radius = cannibalization regardless of demand; 2 WU + low demand also flagged
+    if (wuCluster.length >= 3 || adjDemand < LOW_DEMAND_THRESHOLD) {
+      clusters.push({ centroid, members: wuCluster, adjDemand, wuCount: wuCluster.length, type: 'zones_reduce', compBonus, source: 'wu_seeded' });
+    }
   });
 
   _zonesCache = clusters.filter(c => c.type !== null);
