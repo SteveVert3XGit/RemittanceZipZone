@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WU Competitive Intel — ZIP 33147</title>
+  <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Aptos', sans-serif; background: #0f1117; color: #e6edf3; min-height: 100vh; }
+  </style>
+</head>
+<body>
+<script>
+// ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
+const CLUSTER_RADIUS_MI     = 0.3;
+const COMPETITOR_RADIUS_MI  = 0.5;
+const WU_RADIUS_MI          = 0.5;
+const HIGH_DEMAND_THRESHOLD = 5;
+const LOW_DEMAND_THRESHOLD  = 4;
+
+// ─── MAP BOUNDS ───────────────────────────────────────────────────────────────
+const MAP = {
+  latMin: 25.813, latMax: 25.851, latRange: 0.038,
+  lngMin: -80.251, lngMax: -80.213, lngRange: 0.038,
+  svgW: 700, svgH: 520
+};
+
+// ─── CATEGORY CONFIG ──────────────────────────────────────────────────────────
+const CATEGORIES = {
+  western_union:      { label: 'Western Union',  color: '#F5C518', role: 'primary',       r: 14 },
+  moneygram:          { label: 'MoneyGram',       color: '#004B87', role: 'primary',       r: 14 },
+  ria:                { label: 'Ria',             color: '#E31837', role: 'primary',       r: 14 },
+  financial_services: { label: 'Financial Svcs', color: '#1D9E75', role: 'demand_signal', r: 8  },
+  ethnic_grocery:     { label: 'Ethnic Grocery', color: '#9B59B6', role: 'demand_signal', r: 8  },
+  dollar_store:       { label: 'Dollar Store',   color: '#E91E8C', role: 'demand_signal', r: 8  },
+  laundromat:         { label: 'Laundromat',     color: '#00BCD4', role: 'demand_signal', r: 8  }
+};
+
+const DEMAND_WEIGHTS = {
+  ethnic_grocery: 3, financial_services: 2, dollar_store: 1, laundromat: 1
+};
+const COMPETITOR_BONUS = 2;
+
+// ─── STORE DATA ───────────────────────────────────────────────────────────────
+// ZIP 33147 — Liberty City / Northside, Miami FL
+// Bounds: lat 25.813–25.851, lng -80.251–-80.213
+// Street reference:
+//   NW 79th St ≈ lat 25.849  |  NW 71st St ≈ 25.843  |  NW 62nd St ≈ 25.836
+//   NW 54th St ≈ 25.830      |  NW 46th St ≈ 25.824  |  NW 36th St ≈ 25.813
+//   NW 27th Ave ≈ lng -80.249 |  NW 22nd Ave ≈ -80.241 | NW 17th Ave ≈ -80.234
+//   NW 12th Ave ≈ -80.228    |  NW 7th Ave ≈ -80.222  |  NW 2nd Ave ≈ -80.214
+
+const stores = [
+
+  // ── WESTERN UNION ──────────────────────────────────────────────────────────
+  {
+    id: 'wu_001',
+    category: 'western_union',
+    name: 'Western Union @ Walmart Supercenter',
+    address: '3200 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2490,
+    rating: 3.8,
+    reviews: 94,
+    hours: 'Mon–Sun 6am–11pm',
+    notes: 'Inside Walmart #4303 MoneyCenter; also offers MoneyGram. Phone: 305-913-8439'
+  },
+  {
+    id: 'wu_002',
+    category: 'western_union',
+    name: 'Western Union @ Walgreens',
+    address: '7910 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8480,
+    lng: -80.2490,
+    rating: 3.5,
+    reviews: 38,
+    hours: 'Mon–Fri 9am–9pm, Sat 9am–6pm, Sun 10am–6pm',
+    notes: 'Inside Walgreens #3371; Walgreens is exclusive WU partner. Phone: 305-691-0881'
+  },
+  {
+    id: 'wu_003',
+    category: 'western_union',
+    name: 'Western Union @ Presidente Supermarket #17',
+    address: '8370 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8500,
+    lng: -80.2490,
+    rating: 4.1,
+    reviews: 52,
+    hours: 'Mon–Sat 7am–9:45pm, Sun 7am–8:45pm',
+    notes: 'Inside Presidente Supermarket #17; Money Orders & Western Union services. Phone: 305-691-1722'
+  },
+  {
+    id: 'wu_004',
+    category: 'western_union',
+    name: 'Western Union @ Check Cashing USA',
+    address: '9500 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2490,
+    rating: 3.9,
+    reviews: 17,
+    hours: 'Mon–Thu 9am–7pm, Fri 9am–8pm, Sat 9am–6pm, Sun 11am–4pm',
+    notes: 'Inside Check Cashing USA; check cashing, payday loans, WU transfers. Phone: 305-396-8640'
+  },
+  {
+    id: 'wu_005',
+    category: 'western_union',
+    name: 'Western Union Agent Location',
+    address: '1823 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2300,
+    rating: 3.6,
+    reviews: 22,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Standalone WU agent; also offers fast cash loans, bill pay, pre-paid debit. Phone: 305-754-1456'
+  },
+  {
+    id: 'wu_006',
+    category: 'western_union',
+    name: 'Western Union @ Northside',
+    address: '7910 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8480,
+    lng: -80.2410,
+    rating: 3.7,
+    reviews: 15,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Agent location in the Northside corridor. Phone: 305-691-4981'
+  },
+
+  // ── MONEYGRAM ──────────────────────────────────────────────────────────────
+  {
+    id: 'mg_001',
+    category: 'moneygram',
+    name: 'MoneyGram @ Walmart Supercenter',
+    address: '3200 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2490,
+    rating: 3.8,
+    reviews: 94,
+    hours: 'Mon–Sun 6am–11pm',
+    notes: 'Inside Walmart #4303 MoneyCenter; co-located with Western Union. Phone: 305-913-8439'
+  },
+  {
+    id: 'mg_002',
+    category: 'moneygram',
+    name: 'MoneyGram @ ACE Cash Express',
+    address: '700 NW 79th St, Miami, FL 33150',
+    lat: 25.8490,
+    lng: -80.2220,
+    rating: 3.4,
+    reviews: 28,
+    hours: 'Mon–Fri 8am–8pm, Sat 8am–6pm, Sun closed',
+    notes: 'Inside ACE Cash Express; MoneyGram money orders and transfers, plus payday loans, check cashing. Phone: 305-836-5556'
+  },
+  {
+    id: 'mg_003',
+    category: 'moneygram',
+    name: 'MoneyGram @ 9203 NW 22nd Ave',
+    address: '9203 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2410,
+    rating: 3.6,
+    reviews: 11,
+    hours: 'Mon–Sat 9am–8pm',
+    notes: 'MoneyGram agent location in Northside area'
+  },
+  {
+    id: 'mg_004',
+    category: 'moneygram',
+    name: 'MoneyGram @ 8690 NW 22nd Ave',
+    address: '8690 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8505,
+    lng: -80.2410,
+    rating: 3.5,
+    reviews: 9,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'MoneyGram agent location. Phone: 305-835-7224'
+  },
+  {
+    id: 'mg_005',
+    category: 'moneygram',
+    name: 'MoneyGram @ 1698 NW 79th St',
+    address: '1698 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2290,
+    rating: 3.7,
+    reviews: 14,
+    hours: 'Mon–Sat 9am–8pm, Sun 10am–5pm',
+    notes: 'MoneyGram agent on busy 79th St corridor'
+  },
+  {
+    id: 'mg_006',
+    category: 'moneygram',
+    name: 'MoneyGram @ Check Cashing USA',
+    address: '9500 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8512,
+    lng: -80.2492,
+    rating: 3.9,
+    reviews: 17,
+    hours: 'Mon–Thu 9am–7pm, Fri 9am–8pm, Sat 9am–6pm, Sun 11am–4pm',
+    notes: 'Inside Check Cashing USA; MoneyGram transfers and money orders co-offered with WU. Phone: 305-396-8640'
+  },
+
+  // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────────
+  {
+    id: 'ria_001',
+    category: 'ria',
+    name: 'Ria Money Transfer @ NW 79th St',
+    address: '1823 NW 79th St, Miami, FL 33147',
+    lat: 25.8491,
+    lng: -80.2301,
+    rating: 3.8,
+    reviews: 19,
+    hours: 'Mon–Sat 10am–8pm, Sun 10am–6pm',
+    notes: 'Ria agent on 79th St corridor; also offers fast cash loans and bill pay'
+  },
+  {
+    id: 'ria_002',
+    category: 'ria',
+    name: 'Ria Money Transfer @ El Shaddai Supermarket',
+    address: '1944 NW 17th Ave, Miami, FL 33142',
+    lat: 25.8200,
+    lng: -80.2340,
+    rating: 4.0,
+    reviews: 23,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
+    notes: 'Inside El Shaddai Supermarket; Ria agent embedded in ethnic grocery'
+  },
+  {
+    id: 'ria_003',
+    category: 'ria',
+    name: 'Ria Money Transfer @ Northside',
+    address: '7900 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8479,
+    lng: -80.2490,
+    rating: 3.7,
+    reviews: 12,
+    hours: 'Mon–Sat 9am–8pm, Sun 10am–5pm',
+    notes: 'Ria agent in Northside Shopping Center area'
+  },
+  {
+    id: 'ria_004',
+    category: 'ria',
+    name: 'Ria Money Transfer @ NW 22nd Ave',
+    address: '8690 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8504,
+    lng: -80.2411,
+    rating: 3.6,
+    reviews: 8,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Ria agent on NW 22nd Ave corridor'
+  },
+
+  // ── FINANCIAL SERVICES (check cashing / payday / currency) ─────────────────
+  {
+    id: 'fin_001',
+    category: 'financial_services',
+    name: 'Check Cashing USA',
+    address: '9500 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8513,
+    lng: -80.2493,
+    rating: 3.8,
+    reviews: 17,
+    hours: 'Mon–Thu 9am–7pm, Fri 9am–8pm, Sat 9am–6pm, Sun 11am–4pm',
+    notes: 'Full financial services: check cashing, payday loans, WU, MoneyGram. Phone: 305-396-8640'
+  },
+  {
+    id: 'fin_002',
+    category: 'financial_services',
+    name: 'ACE Cash Express',
+    address: '700 NW 79th St, Miami, FL 33150',
+    lat: 25.8491,
+    lng: -80.2221,
+    rating: 3.4,
+    reviews: 28,
+    hours: 'Mon–Fri 8am–8pm, Sat 8am–6pm, Sun closed',
+    notes: 'Payday loans, check cashing, MoneyGram, bill pay. Just north of 33147 border. Phone: 305-836-5556'
+  },
+  {
+    id: 'fin_003',
+    category: 'financial_services',
+    name: 'Miami Check Cashers',
+    address: '2959 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2471,
+    rating: 3.5,
+    reviews: 21,
+    hours: 'Mon–Sat 8am–8pm, Sun 10am–4pm',
+    notes: 'Check cashing, loans, and payday loan services on 79th St corridor'
+  },
+  {
+    id: 'fin_004',
+    category: 'financial_services',
+    name: 'Walmart Money Services',
+    address: '3200 NW 79th St, Miami, FL 33147',
+    lat: 25.8492,
+    lng: -80.2492,
+    rating: 4.0,
+    reviews: 94,
+    hours: 'Mon–Sun 6am–11pm',
+    notes: 'Inside Walmart #4303; check cashing, money transfer, bill pay, tax prep. Phone: 305-913-8439'
+  },
+  {
+    id: 'fin_005',
+    category: 'financial_services',
+    name: 'Gold Seal Check Cashing Service',
+    address: '6209 NW 18th Ave, Miami, FL 33147',
+    lat: 25.8360,
+    lng: -80.2360,
+    rating: 3.6,
+    reviews: 14,
+    hours: 'Mon–Fri 8am–7pm, Sat 8am–5pm',
+    notes: 'Independent check cashing and financial services in mid-zip corridor'
+  },
+  {
+    id: 'fin_006',
+    category: 'financial_services',
+    name: 'Check Cashing USA – NW 27th Ave South',
+    address: '3598 NW 27th Ave, Miami, FL 33142',
+    lat: 25.8200,
+    lng: -80.2490,
+    rating: 3.7,
+    reviews: 31,
+    hours: 'Mon–Thu 8am–8pm, Fri 8am–9pm, Sat 8am–8pm, Sun 11am–5pm',
+    notes: 'Adjacent to 33147 southern boundary; captures demand from 33147 residents. Phone: 305-634-6922'
+  },
+  {
+    id: 'fin_007',
+    category: 'financial_services',
+    name: 'Florida Check Cashing – NW 7th Ave',
+    address: '7901 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8479,
+    lng: -80.2491,
+    rating: 3.5,
+    reviews: 9,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Small independent check casher near Northside shopping area'
+  },
+
+  // ── ETHNIC GROCERY ─────────────────────────────────────────────────────────
+  {
+    id: 'eg_001',
+    category: 'ethnic_grocery',
+    name: 'Presidente Supermarket #17',
+    address: '8370 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8502,
+    lng: -80.2492,
+    rating: 4.1,
+    reviews: 52,
+    hours: 'Mon–Sat 7am–9:45pm, Sun 7am–8:45pm',
+    notes: 'Major Latin supermarket; hosts Western Union, cafeteria, money orders. Phone: 305-691-1722'
+  },
+  {
+    id: 'eg_002',
+    category: 'ethnic_grocery',
+    name: 'Walmart Supercenter',
+    address: '3200 NW 79th St, Miami, FL 33147',
+    lat: 25.8493,
+    lng: -80.2494,
+    rating: 3.8,
+    reviews: 94,
+    hours: 'Mon–Sun 6am–11pm',
+    notes: 'Large format grocery and general merchandise; hosts WU, MoneyGram, Walmart Money Services. Phone: 305-913-8439'
+  },
+  {
+    id: 'eg_003',
+    category: 'ethnic_grocery',
+    name: 'Bravo Supermarkets',
+    address: '8700 NW 32nd Ave, Miami, FL 33147',
+    lat: 25.8503,
+    lng: -80.2500,
+    rating: 4.0,
+    reviews: 67,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: 'Latin supermarket with broad Caribbean/Hispanic inventory. Phone: 305-696-9157'
+  },
+  {
+    id: 'eg_004',
+    category: 'ethnic_grocery',
+    name: "Sedano's Supermarket",
+    address: '3140 NW 76th St, Miami, FL 33147',
+    lat: 25.8463,
+    lng: -80.2490,
+    rating: 3.9,
+    reviews: 44,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: "Cuban/Latin chain supermarket; popular with local Hispanic community. Phone: 305-403-6406. Note: Yelp shows CLOSED — verify before use"
+  },
+  {
+    id: 'eg_005',
+    category: 'ethnic_grocery',
+    name: 'El Shaddai Supermarket',
+    address: '1944 NW 17th Ave, Miami, FL 33142',
+    lat: 25.8201,
+    lng: -80.2341,
+    rating: 4.2,
+    reviews: 38,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
+    notes: 'Caribbean/Haitian-focused ethnic grocery; hosts Ria Money Transfer agent'
+  },
+  {
+    id: 'eg_006',
+    category: 'ethnic_grocery',
+    name: 'Latin American Market',
+    address: '2145 NW 62nd St, Miami, FL 33147',
+    lat: 25.8362,
+    lng: -80.2412,
+    rating: 3.9,
+    reviews: 29,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
+    notes: 'Mid-zip Latin grocery; serves dense residential blocks along NW 62nd St corridor'
+  },
+  {
+    id: 'eg_007',
+    category: 'ethnic_grocery',
+    name: 'Caribbean Best Market',
+    address: '7500 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8463,
+    lng: -80.2413,
+    rating: 4.0,
+    reviews: 33,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–6pm',
+    notes: 'Caribbean-focused grocery; stocks Jamaican, Haitian, Trinidadian products'
+  },
+  {
+    id: 'eg_008',
+    category: 'ethnic_grocery',
+    name: 'J G & T Caribbean Grocery',
+    address: '6557 NW 17th Ave, Miami, FL 33147',
+    lat: 25.8375,
+    lng: -80.2343,
+    rating: 3.8,
+    reviews: 18,
+    hours: 'Mon–Sat 9am–8pm',
+    notes: 'Small-format Caribbean grocery; Haitian and Jamaican specialties'
+  },
+
+  // ── DOLLAR STORES ──────────────────────────────────────────────────────────
+  {
+    id: 'ds_001',
+    category: 'dollar_store',
+    name: 'Family Dollar',
+    address: '2151 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2422,
+    rating: 3.6,
+    reviews: 45,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Family Dollar on 79th St corridor. Phone: 786-598-2792'
+  },
+  {
+    id: 'ds_002',
+    category: 'dollar_store',
+    name: 'Family Dollar',
+    address: '2712 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2461,
+    rating: 3.5,
+    reviews: 38,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Second Family Dollar on western 79th St. Phone: 786-310-1026'
+  },
+  {
+    id: 'ds_003',
+    category: 'dollar_store',
+    name: 'Family Dollar',
+    address: '9390 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2491,
+    rating: 3.7,
+    reviews: 29,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Family Dollar on NW 27th Ave near northern boundary. Phone: 786-671-4265'
+  },
+  {
+    id: 'ds_004',
+    category: 'dollar_store',
+    name: 'Dollar Tree',
+    address: '7900 NW 27th Ave Ste B4, Miami, FL 33147',
+    lat: 25.8479,
+    lng: -80.2492,
+    rating: 3.8,
+    reviews: 56,
+    hours: 'Mon–Sat 9am–9pm, Sun 10am–8pm',
+    notes: 'In Northside Shopping Center; high foot-traffic location. Phone: 645-225-3242'
+  },
+  {
+    id: 'ds_005',
+    category: 'dollar_store',
+    name: 'Dollar General',
+    address: '3105 NW 62nd St, Miami, FL 33147',
+    lat: 25.8365,
+    lng: -80.2492,
+    rating: 3.6,
+    reviews: 33,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Dollar General in mid-zip area serving NW 62nd St residential blocks'
+  },
+
+  // ── LAUNDROMATS ────────────────────────────────────────────────────────────
+  {
+    id: 'lm_001',
+    category: 'laundromat',
+    name: 'LaundroMart',
+    address: '2205 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2432,
+    rating: 4.1,
+    reviews: 25,
+    hours: 'Open 24 hours, 7 days',
+    notes: '24-hour branded laundromat on 79th St; high foot traffic. Phone: 877-446-9274'
+  },
+  {
+    id: 'lm_002',
+    category: 'laundromat',
+    name: 'Spa Laundromat',
+    address: '2145 NW 62nd St, Miami, FL 33147',
+    lat: 25.8362,
+    lng: -80.2413,
+    rating: 4.0,
+    reviews: 19,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: 'On NE corner of NW 62nd St & NW 22nd Ave; self-service and wash-and-fold. Phone: 786-452-0325'
+  },
+  {
+    id: 'lm_003',
+    category: 'laundromat',
+    name: 'Coin Laundry',
+    address: '1295 NW 103rd St, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2280,
+    rating: 3.9,
+    reviews: 12,
+    hours: 'Mon–Sun 7am–9pm',
+    notes: 'Near northern boundary; wheelchair accessible. Phone: 305-495-7858'
+  },
+  {
+    id: 'lm_004',
+    category: 'laundromat',
+    name: 'Laundromat – NW 54th St',
+    address: '2561 NW 54th St, Miami, FL 33142',
+    lat: 25.8301,
+    lng: -80.2461,
+    rating: 3.7,
+    reviews: 8,
+    hours: 'Mon–Sun 7am–9pm',
+    notes: 'Just south of 33147 boundary; serves Liberty City residents. Phone: 305-640-5239'
+  },
+  {
+    id: 'lm_005',
+    category: 'laundromat',
+    name: 'Coin Laundry – NW 7th Ave',
+    address: '7900 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8481,
+    lng: -80.2493,
+    rating: 3.8,
+    reviews: 10,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: 'Near Northside Shopping Center; convenient for surrounding neighborhood'
+  }
+
+];
+</script>
+</body>
+</html>
