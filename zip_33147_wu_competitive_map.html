@@ -750,6 +750,55 @@ function showPin(store) {
   `;
 }
 
+// ─── SPATIAL HELPERS ──────────────────────────────────────────────────────────
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 3958.8;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// ─── ZONE COMPUTATION ─────────────────────────────────────────────────────────
+function computeZones() {
+  const demandStores = stores.filter(s => DEMAND_WEIGHTS[s.category] !== undefined);
+  const competitors  = stores.filter(s => s.category === 'moneygram' || s.category === 'ria');
+  const wuStores     = stores.filter(s => s.category === 'western_union');
+
+  const visited = new Set();
+  const clusters = [];
+  demandStores.forEach(seed => {
+    if (visited.has(seed.id)) return;
+    const members = demandStores.filter(s =>
+      haversine(seed.lat, seed.lng, s.lat, s.lng) <= CLUSTER_RADIUS_MI
+    );
+    members.forEach(m => visited.add(m.id));
+    const centroid = {
+      lat: members.reduce((sum, m) => sum + m.lat, 0) / members.length,
+      lng: members.reduce((sum, m) => sum + m.lng, 0) / members.length
+    };
+    const baseScore = members.reduce((sum, m) => sum + (DEMAND_WEIGHTS[m.category] || 0), 0);
+    const compBonus = competitors.filter(c =>
+      haversine(centroid.lat, centroid.lng, c.lat, c.lng) <= COMPETITOR_RADIUS_MI
+    ).length * COMPETITOR_BONUS;
+    const adjDemand = baseScore + compBonus;
+    const wuCount = wuStores.filter(w =>
+      haversine(centroid.lat, centroid.lng, w.lat, w.lng) <= WU_RADIUS_MI
+    ).length;
+
+    let type = null;
+    if (adjDemand >= HIGH_DEMAND_THRESHOLD && wuCount === 0) type = 'zones_expand';
+    else if (adjDemand >= HIGH_DEMAND_THRESHOLD && wuCount >= 2) type = 'zones_monitor';
+    else if (adjDemand < LOW_DEMAND_THRESHOLD  && wuCount >= 2) type = 'zones_reduce';
+
+    clusters.push({ centroid, members, adjDemand, wuCount, type, compBonus });
+  });
+
+  return clusters.filter(c => c.type !== null);
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   renderToggles();
