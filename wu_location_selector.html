@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Western Union Location Selector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0f1117; color: #e6edf3; min-height: 100vh; }
+    #app { display: flex; flex-direction: column; min-height: 100vh; padding: 12px; gap: 10px; max-width: 1100px; margin: 0 auto; }
+    #top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #1a1f2e; border-radius: 8px; }
+    #logo { color: #F5C518; font-size: 18px; margin-right: 8px; }
+    #title-text { font-weight: 700; font-size: 15px; }
+    #zip-label { color: #666; font-weight: 400; font-size: 13px; margin-left: 8px; }
+    #pdf-btn { background: #2a2a2a; color: #ccc; border: 1px solid #444; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+    #pdf-btn:hover { background: #333; }
+    #toggle-bar { display: flex; flex-direction: column; gap: 6px; }
+    .toggle-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .toggle-row-label { font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; min-width: 110px; }
+    #main-content { display: grid; grid-template-columns: 1fr 280px; gap: 10px; }
+    #map-wrap { background: #111927; border-radius: 10px; overflow: hidden; }
+    #map-svg { width: 100%; height: auto; display: block; }
+    #right-panel { display: flex; flex-direction: column; gap: 8px; }
+    #pin-detail { background: #1a1f2e; border-radius: 8px; padding: 14px; min-height: 120px; border: 1px solid #2a3040; }
+    #pin-placeholder { color: #555; font-size: 13px; }
+    #scorecard { background: #1a1f2e; border-radius: 8px; padding: 14px; flex: 1; border: 1px solid #2a3040; }
+    #narrative { background: #1a1f2e; border-radius: 8px; padding: 16px; border: 1px solid #2a3040; }
+    #demographics { background: #1a1f2e; border-radius: 8px; padding: 16px; border: 1px solid #2a3040; }
+    .demo-header { font-size: 11px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .demo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .demo-card { background: #0d1117; border-radius: 6px; padding: 12px; border: 1px solid #2a3040; }
+    .demo-card-label { font-size: 10px; color: #666; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .demo-card-value { font-size: 20px; font-weight: 700; color: #e6edf3; line-height: 1.1; }
+    .demo-card-sub { font-size: 11px; color: #8b949e; margin-top: 3px; }
+    .demo-card.highlight .demo-card-value { color: #F5C518; }
+    .demo-diaspora-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .demo-diaspora-item { background: #0d1117; border-radius: 6px; padding: 10px 12px; border: 1px solid #2a3040; display: flex; justify-content: space-between; align-items: center; }
+    .demo-diaspora-name { font-size: 12px; color: #ccc; }
+    .demo-diaspora-pct { font-size: 14px; font-weight: 700; color: #79c0ff; }
+    .demo-context { font-size: 12px; color: #8b949e; line-height: 1.7; border-top: 1px solid #2a3040; padding-top: 12px; }
+    .pin { cursor: pointer; }
+    .toggle-btn { border: none; padding: 5px 11px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; background: #1a1f2e; transition: opacity 0.15s; }
+    .zone-toggle { background: #1a1f2e !important; }
+    .toggle-btn:hover { filter: brightness(1.1); }
+    .pin-category-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+    .pin-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; color: #e6edf3; }
+    .pin-address { font-size: 11px; color: #8b949e; margin-bottom: 6px; }
+    .pin-meta { font-size: 12px; color: #ccc; margin-bottom: 3px; }
+    .pin-notes { font-size: 11px; color: #79c0ff; margin: 6px 0; font-style: italic; }
+    .pin-maps-link { display: inline-block; margin-top: 10px; font-size: 12px; color: #79c0ff; text-decoration: none; }
+    .pin-maps-link:hover { text-decoration: underline; }
+    .scorecard-label { font-size: 10px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .scorecard-section { margin-bottom: 10px; }
+    .scorecard-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .scorecard-section.expand .scorecard-title { color: #3fb950; }
+    .scorecard-section.monitor .scorecard-title { color: #f0c040; }
+    .scorecard-section.reduce  .scorecard-title { color: #f85149; }
+    .scorecard-row { font-size: 11px; color: #ccc; padding: 2px 0 2px 8px; }
+    .scorecard-sub { font-size: 10px; color: #666; }
+    .scorecard-counts { border-top: 1px solid #2a3040; padding-top: 10px; margin-top: 8px; }
+    .count-row { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; padding: 2px 0; }
+    .scorecard-empty { font-size: 11px; color: #555; font-style: italic; }
+    .narrative-header { font-size: 11px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .narrative-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .narrative-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .narrative-col-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+    .narrative-col.expand .narrative-col-title { color: #3fb950; }
+    .narrative-col.monitor .narrative-col-title { color: #f0c040; }
+    .narrative-col.reduce  .narrative-col-title { color: #f85149; }
+    .narrative-item { display: flex; gap: 10px; margin-bottom: 10px; }
+    .narrative-rank { background: #2a3040; color: #ccc; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .narrative-item-title { font-size: 12px; font-weight: 600; color: #e6edf3; margin-bottom: 2px; }
+    .narrative-item-desc { font-size: 11px; color: #8b949e; line-height: 1.5; }
+    .narrative-empty { font-size: 12px; color: #555; font-style: italic; }
+    .narrative-context { font-size: 12px; color: #8b949e; line-height: 1.7; border-top: 1px solid #2a3040; padding-top: 12px; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f1117; }
+    ::-webkit-scrollbar-thumb { background: #2a3040; border-radius: 3px; }
+    @media (max-width: 800px) { #main-content { grid-template-columns: 1fr; } #right-panel { display: none; } }
+    @media print { #toggle-bar { display: none; } #pdf-btn { display: none; } }
+    #zip-select { background: #1a1f2e; color: #e6edf3; border: 1px solid #2a3040; border-radius: 6px; padding: 4px 10px; font-size: 13px; font-family: inherit; cursor: pointer; }
+    #zip-select:focus { outline: none; border-color: #F5C518; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header id="top-bar">
+    <div id="title-block">
+      <span id="logo">⬡</span>
+      <span id="title-text">Western Union Location Selector</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <select id="zip-select" onchange="selectZip(this.value)">
+        <option value="33147">ZIP 33147 — Liberty City / NW Miami</option>
+        <option value="33463">ZIP 33463 — Lake Worth / Greenacres</option>
+      </select>
+      <button id="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
+    </div>
+  </header>
+
+  <div id="toggle-bar"><!-- populated by JS in Task 4 --></div>
+
+  <div id="main-content">
+    <div id="map-wrap">
+      <svg id="map-svg" viewBox="0 0 700 520" xmlns="http://www.w3.org/2000/svg">
+        <!-- Street grid -->
+        <g id="streets"></g>
+        <!-- Zone ellipses rendered here by Task 7 -->
+        <g id="zones-layer"></g>
+        <!-- Pins rendered here by Task 3 -->
+        <g id="pins-layer"></g>
+        <!-- Compass -->
+        <g transform="translate(660,480)">
+          <circle r="14" fill="#1a1f2e" stroke="#2a3040"/>
+          <text x="0" y="-4" text-anchor="middle" fill="#79c0ff" font-size="10" font-weight="bold">N</text>
+          <line x1="0" y1="-12" x2="0" y2="12" stroke="#444" stroke-width="1"/>
+          <line x1="-12" y1="0" x2="12" y2="0" stroke="#444" stroke-width="1"/>
+        </g>
+      </svg>
+    </div>
+
+    <div id="right-panel">
+      <div id="pin-detail">
+        <p id="pin-placeholder">Click any pin to see details</p>
+      </div>
+      <div id="scorecard"><!-- populated by Task 8 --></div>
+    </div>
+  </div>
+
+  <div id="narrative"><!-- populated by Task 9 --></div>
+
+  <div id="demographics"></div>
+</div>
+<script>
+function exportPDF() {
+  if (typeof html2pdf === 'undefined') {
+    alert('PDF export unavailable — library failed to load. Check your internet connection.');
+    return;
+  }
+  const btn = document.getElementById('pdf-btn');
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+  const opt = {
+    margin:      [8, 8],
+    filename:    'wu_competitive_intel_33147.pdf',
+    image:       { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF:       { unit: 'mm', format: 'a4', orientation: 'landscape' }
+  };
+  html2pdf().set(opt).from(document.getElementById('app')).save()
+    .then(() => { btn.textContent = '⬇ Export PDF'; btn.disabled = false; })
+    .catch(() => { btn.textContent = '⬇ Export PDF'; btn.disabled = false; alert('PDF export failed. Check your connection.'); });
+}
+
+// ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
+const CLUSTER_RADIUS_MI          = 0.35;
+const COMPETITOR_RADIUS_MI       = 0.5;
+const WU_RADIUS_MI               = 0.5;
+const WU_CANNIBALIZATION_RADIUS_MI = 0.3;
+const HIGH_DEMAND_THRESHOLD = 5;
+const LOW_DEMAND_THRESHOLD  = 3;
+
+// ─── PER-ZIP CONFIGURATION ────────────────────────────────────────────────────
+const ZIP_CONFIG = {
+  '33147': {
+    label: 'ZIP 33147 — Liberty City / NW Miami',
+    map: {
+      latMin: 25.813, latMax: 25.853, latRange: 0.040,
+      lngMin: -80.251, lngMax: -80.213, lngRange: 0.038,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'NW 27th Ave', lng: -80.249 },
+        { name: 'NW 17th Ave', lng: -80.234 },
+        { name: 'NW 7th Ave',  lng: -80.222 }
+      ],
+      ew: [
+        { name: 'NW 79th St', lat: 25.851 },
+        { name: 'NW 62nd St', lat: 25.837 },
+        { name: 'NW 54th St', lat: 25.831 },
+        { name: 'NW 36th St', lat: 25.813 }
+      ]
+    },
+    streets: [
+      { type: 'ew', y: 27,  weight: 3, label: 'NW 79th St', labelX: 42, labelY: 23  },
+      { type: 'ew', y: 205, weight: 3, label: 'NW 62nd St', labelX: 42, labelY: 201 },
+      { type: 'ew', y: 287, weight: 2, label: 'NW 54th St', labelX: 42, labelY: 283 },
+      { type: 'ew', y: 520, weight: 2, label: 'NW 36th St', labelX: 42, labelY: 516 },
+      { type: 'ns', x: 37,  weight: 3, label: 'NW 27th Ave' },
+      { type: 'ns', x: 313, weight: 2, label: 'NW 17th Ave' },
+      { type: 'ns', x: 534, weight: 3, label: 'NW 7th Ave'  }
+    ],
+    demographics: {
+      areaName: 'Liberty City / NW Miami',
+      population: '~35,200',
+      foreignBorn: { pct: '38%', count: '~13,400 residents' },
+      unbanked:    { pct: '~35%', note: 'vs. 5.9% national avg' },
+      poverty:     { pct: '33%',  medianHHI: '$28,500' },
+      diaspora: [
+        { name: 'Haitian',                  pct: '~22%' },
+        { name: 'Black / African American', pct: '~68%' },
+        { name: 'Hispanic / Latino',        pct: '~27%' },
+        { name: 'Cuban',                    pct: '~8%'  },
+        { name: 'Caribbean (other)',        pct: '~6%'  },
+        { name: 'Per Capita Income',        pct: '$11,800' }
+      ],
+      context: 'ZIP 33147 is one of Miami\'s highest-density remittance corridors. The Haitian diaspora (~22%) is the dominant transnational sender group, with strong ties to Port-au-Prince and Croix-des-Bouquets. A high unbanked rate (~35%) means cash-based remittance services — not digital apps — remain the primary channel. Low median household income ($28,500) and high poverty (33%) reinforce reliance on informal and agent-based transfer networks.'
+    },
+    stores: [
+
+  // ── WESTERN UNION ──────────────────────────────────────────────────────────
+  {
+    id: 'wu_001',
+    category: 'western_union',
+    name: 'Western Union @ Walmart Supercenter',
+    address: '3200 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2490,
+    rating: 3.8,
+    reviews: 94,
+    hours: 'Mon–Sun 6am–11pm',
+    notes: 'Inside Walmart #4303 MoneyCenter; also offers MoneyGram. Phone: 305-913-8439',
+    bigbox: true
+  },
+  {
+    id: 'wu_002',
+    category: 'western_union',
+    name: 'Western Union @ Walgreens',
+    address: '7910 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8480,
+    lng: -80.2490,
+    rating: 3.5,
+    reviews: 38,
+    hours: 'Mon–Fri 9am–9pm, Sat 9am–6pm, Sun 10am–6pm',
+    notes: 'Inside Walgreens #3371; Walgreens is exclusive WU partner. Phone: 305-691-0881',
+    bigbox: true
+  },
+  {
+    id: 'wu_003',
+    category: 'western_union',
+    name: 'Western Union @ Presidente Supermarket #17',
+    address: '8370 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8500,
+    lng: -80.2490,
+    rating: 4.1,
+    reviews: 52,
+    hours: 'Mon–Sat 7am–9:45pm, Sun 7am–8:45pm',
+    notes: 'Inside Presidente Supermarket #17; Money Orders & Western Union services. Phone: 305-691-1722'
+  },
+  {
+    id: 'wu_004',
+    category: 'western_union',
+    name: 'Western Union @ Check Cashing USA',
+    address: '9500 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8508,
+    lng: -80.2490,
+    rating: 3.9,
+    reviews: 17,
+    hours: 'Mon–Thu 9am–7pm, Fri 9am–8pm, Sat 9am–6pm, Sun 11am–4pm',
+    notes: 'Inside Check Cashing USA; check cashing, payday loans, WU transfers. Phone: 305-396-8640'
+  },
+  {
+    id: 'wu_005',
+    category: 'western_union',
+    name: 'Western Union Agent Location',
+    address: '1823 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2300,
+    rating: 3.6,
+    reviews: 22,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Standalone WU agent; also offers fast cash loans, bill pay, pre-paid debit. Phone: 305-754-1456'
+  },
+  {
+    id: 'wu_006',
+    category: 'western_union',
+    name: 'Western Union @ Northside',
+    address: '7910 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8480,
+    lng: -80.2410,
+    rating: 3.7,
+    reviews: 15,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Agent location in the Northside corridor. Phone: 305-691-4981'
+  },
+
+  // ── MONEYGRAM ──────────────────────────────────────────────────────────────
+  {
+    id: 'mg_001',
+    category: 'moneygram',
+    name: 'MoneyGram @ Walmart Supercenter',
+    address: '3200 NW 79th St, Miami, FL 33147',
+    lat: 25.8492,
+    lng: -80.2488,
+    rating: 3.8,
+    reviews: 94,
+    hours: 'Mon–Sun 6am–11pm',
+    notes: 'Inside Walmart #4303 MoneyCenter; co-located with Western Union. Phone: 305-913-8439',
+    bigbox: true
+  },
+  {
+    id: 'mg_002',
+    category: 'moneygram',
+    name: 'MoneyGram @ ACE Cash Express',
+    address: '700 NW 79th St, Miami, FL 33150',
+    lat: 25.8490,
+    lng: -80.2220,
+    rating: 3.4,
+    reviews: 28,
+    hours: 'Mon–Fri 8am–8pm, Sat 8am–6pm, Sun closed',
+    notes: 'Inside ACE Cash Express; MoneyGram money orders and transfers, plus payday loans, check cashing. Phone: 305-836-5556'
+  },
+  {
+    id: 'mg_003',
+    category: 'moneygram',
+    name: 'MoneyGram @ 9203 NW 22nd Ave',
+    address: '9203 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2410,
+    rating: 3.6,
+    reviews: 11,
+    hours: 'Mon–Sat 9am–8pm',
+    notes: 'MoneyGram agent location in Northside area'
+  },
+  {
+    id: 'mg_004',
+    category: 'moneygram',
+    name: 'MoneyGram @ 8690 NW 22nd Ave',
+    address: '8690 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8505,
+    lng: -80.2410,
+    rating: 3.5,
+    reviews: 9,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'MoneyGram agent location. Phone: 305-835-7224'
+  },
+  {
+    id: 'mg_005',
+    category: 'moneygram',
+    name: 'MoneyGram @ 1698 NW 79th St',
+    address: '1698 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2290,
+    rating: 3.7,
+    reviews: 14,
+    hours: 'Mon–Sat 9am–8pm, Sun 10am–5pm',
+    notes: 'MoneyGram agent on busy 79th St corridor'
+  },
+  {
+    id: 'mg_006',
+    category: 'moneygram',
+    name: 'MoneyGram @ Check Cashing USA',
+    address: '9500 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2492,
+    rating: 3.9,
+    reviews: 17,
+    hours: 'Mon–Thu 9am–7pm, Fri 9am–8pm, Sat 9am–6pm, Sun 11am–4pm',
+    notes: 'Inside Check Cashing USA; MoneyGram transfers and money orders co-offered with WU. Phone: 305-396-8640'
+  },
+
+  // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────────
+  {
+    id: 'ria_001',
+    category: 'ria',
+    name: 'Ria Money Transfer @ NW 79th St',
+    address: '1823 NW 79th St, Miami, FL 33147',
+    lat: 25.8491,
+    lng: -80.2301,
+    rating: 3.8,
+    reviews: 19,
+    hours: 'Mon–Sat 10am–8pm, Sun 10am–6pm',
+    notes: 'Ria agent on 79th St corridor; also offers fast cash loans and bill pay'
+  },
+  {
+    id: 'ria_002',
+    category: 'ria',
+    name: 'Ria Money Transfer @ El Shaddai Supermarket',
+    address: '1944 NW 17th Ave, Miami, FL 33142',
+    lat: 25.8200,
+    lng: -80.2340,
+    rating: 4.0,
+    reviews: 23,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
+    notes: 'Inside El Shaddai Supermarket; Ria agent embedded in ethnic grocery. Adjacent spillover — ZIP 33142 but within map range.'
+  },
+  {
+    id: 'ria_003',
+    category: 'ria',
+    name: 'Ria Money Transfer @ Northside',
+    address: '7900 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8479,
+    lng: -80.2490,
+    rating: 3.7,
+    reviews: 12,
+    hours: 'Mon–Sat 9am–8pm, Sun 10am–5pm',
+    notes: 'Ria agent in Northside Shopping Center area'
+  },
+  {
+    id: 'ria_004',
+    category: 'ria',
+    name: 'Ria Money Transfer @ NW 22nd Ave',
+    address: '8690 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8504,
+    lng: -80.2411,
+    rating: 3.6,
+    reviews: 8,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Ria agent on NW 22nd Ave corridor'
+  },
+
+  // ── FINANCIAL SERVICES (check cashing / payday / currency) ─────────────────
+  {
+    id: 'fin_001',
+    category: 'financial_services',
+    name: 'Check Cashing USA',
+    address: '9500 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2493,
+    rating: 3.8,
+    reviews: 17,
+    hours: 'Mon–Thu 9am–7pm, Fri 9am–8pm, Sat 9am–6pm, Sun 11am–4pm',
+    notes: 'Full financial services: check cashing, payday loans, WU, MoneyGram. Phone: 305-396-8640'
+  },
+  {
+    id: 'fin_002',
+    category: 'financial_services',
+    name: 'ACE Cash Express',
+    address: '700 NW 79th St, Miami, FL 33150',
+    lat: 25.8491,
+    lng: -80.2221,
+    rating: 3.4,
+    reviews: 28,
+    hours: 'Mon–Fri 8am–8pm, Sat 8am–6pm, Sun closed',
+    notes: 'Payday loans, check cashing, MoneyGram, bill pay. Just north of 33147 border. Phone: 305-836-5556'
+  },
+  {
+    id: 'fin_003',
+    category: 'financial_services',
+    name: 'Miami Check Cashers',
+    address: '2959 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2471,
+    rating: 3.5,
+    reviews: 21,
+    hours: 'Mon–Sat 8am–8pm, Sun 10am–4pm',
+    notes: 'Check cashing, loans, and payday loan services on 79th St corridor'
+  },
+  {
+    id: 'fin_004',
+    category: 'financial_services',
+    name: 'Walmart Money Services',
+    address: '3200 NW 79th St, Miami, FL 33147',
+    lat: 25.8492,
+    lng: -80.2492,
+    rating: 4.0,
+    reviews: 94,
+    hours: 'Mon–Sun 6am–11pm',
+    notes: 'Inside Walmart #4303; check cashing, money transfer, bill pay, tax prep. Phone: 305-913-8439',
+    bigbox: true
+  },
+  {
+    id: 'fin_005',
+    category: 'financial_services',
+    name: 'Gold Seal Check Cashing Service',
+    address: '6209 NW 18th Ave, Miami, FL 33147',
+    lat: 25.8360,
+    lng: -80.2360,
+    rating: 3.6,
+    reviews: 14,
+    hours: 'Mon–Fri 8am–7pm, Sat 8am–5pm',
+    notes: 'Independent check cashing and financial services in mid-zip corridor'
+  },
+  {
+    id: 'fin_006',
+    category: 'financial_services',
+    name: 'Check Cashing USA – NW 27th Ave South',
+    address: '3598 NW 27th Ave, Miami, FL 33142',
+    lat: 25.8200,
+    lng: -80.2490,
+    rating: 3.7,
+    reviews: 31,
+    hours: 'Mon–Thu 8am–8pm, Fri 8am–9pm, Sat 8am–8pm, Sun 11am–5pm',
+    notes: 'Adjacent to 33147 southern boundary; captures demand from 33147 residents. Phone: 305-634-6922'
+  },
+  {
+    id: 'fin_007',
+    category: 'financial_services',
+    name: 'Florida Check Cashing – NW 27th Ave',
+    address: '7901 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8479,
+    lng: -80.2491,
+    rating: 3.5,
+    reviews: 9,
+    hours: 'Mon–Sat 9am–7pm',
+    notes: 'Small independent check casher near Northside shopping area'
+  },
+
+  // ── ETHNIC GROCERY ─────────────────────────────────────────────────────────
+  {
+    id: 'eg_001',
+    category: 'ethnic_grocery',
+    name: 'Presidente Supermarket #17',
+    address: '8370 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8502,
+    lng: -80.2492,
+    rating: 4.1,
+    reviews: 52,
+    hours: 'Mon–Sat 7am–9:45pm, Sun 7am–8:45pm',
+    notes: 'Major Latin supermarket; hosts Western Union, cafeteria, money orders. Phone: 305-691-1722'
+  },
+  {
+    id: 'eg_002',
+    category: 'ethnic_grocery',
+    name: 'Bravo Supermarkets',
+    address: '8700 NW 32nd Ave, Miami, FL 33147',
+    lat: 25.8503,
+    lng: -80.2500,
+    rating: 4.0,
+    reviews: 67,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: 'Latin supermarket with broad Caribbean/Hispanic inventory. Phone: 305-696-9157'
+  },
+  {
+    id: 'eg_003',
+    category: 'ethnic_grocery',
+    name: "Sedano's Supermarket",
+    address: '3140 NW 76th St, Miami, FL 33147',
+    lat: 25.8463,
+    lng: -80.2490,
+    rating: 3.9,
+    reviews: 44,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: "Cuban/Latin chain supermarket; popular with local Hispanic community. Phone: 305-403-6406. Note: Yelp shows CLOSED — verify before use"
+  },
+  {
+    id: 'eg_004',
+    category: 'ethnic_grocery',
+    name: 'El Shaddai Supermarket',
+    address: '1944 NW 17th Ave, Miami, FL 33142',
+    lat: 25.8201,
+    lng: -80.2341,
+    rating: 4.2,
+    reviews: 38,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
+    notes: 'Caribbean/Haitian-focused ethnic grocery; hosts Ria Money Transfer agent. Adjacent spillover — ZIP 33142 but within map range.'
+  },
+  {
+    id: 'eg_005',
+    category: 'ethnic_grocery',
+    name: 'Latin American Market',
+    address: '2145 NW 62nd St, Miami, FL 33147',
+    lat: 25.8362,
+    lng: -80.2412,
+    rating: 3.9,
+    reviews: 29,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–7pm',
+    notes: 'Mid-zip Latin grocery; serves dense residential blocks along NW 62nd St corridor'
+  },
+  {
+    id: 'eg_006',
+    category: 'ethnic_grocery',
+    name: 'Caribbean Best Market',
+    address: '7500 NW 22nd Ave, Miami, FL 33147',
+    lat: 25.8463,
+    lng: -80.2413,
+    rating: 4.0,
+    reviews: 33,
+    hours: 'Mon–Sat 8am–9pm, Sun 9am–6pm',
+    notes: 'Caribbean-focused grocery; stocks Jamaican, Haitian, Trinidadian products'
+  },
+  {
+    id: 'eg_007',
+    category: 'ethnic_grocery',
+    name: 'J G & T Caribbean Grocery',
+    address: '6557 NW 17th Ave, Miami, FL 33147',
+    lat: 25.8375,
+    lng: -80.2343,
+    rating: 3.8,
+    reviews: 18,
+    hours: 'Mon–Sat 9am–8pm',
+    notes: 'Small-format Caribbean grocery; Haitian and Jamaican specialties'
+  },
+
+  // ── DOLLAR STORES ──────────────────────────────────────────────────────────
+  {
+    id: 'ds_001',
+    category: 'dollar_store',
+    name: 'Family Dollar',
+    address: '2151 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2422,
+    rating: 3.6,
+    reviews: 45,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Family Dollar on 79th St corridor. Phone: 786-598-2792'
+  },
+  {
+    id: 'ds_002',
+    category: 'dollar_store',
+    name: 'Family Dollar',
+    address: '2712 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2461,
+    rating: 3.5,
+    reviews: 38,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Second Family Dollar on western 79th St. Phone: 786-310-1026'
+  },
+  {
+    id: 'ds_003',
+    category: 'dollar_store',
+    name: 'Family Dollar',
+    address: '9390 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8510,
+    lng: -80.2491,
+    rating: 3.7,
+    reviews: 29,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Family Dollar on NW 27th Ave near northern boundary. Phone: 786-671-4265'
+  },
+  {
+    id: 'ds_004',
+    category: 'dollar_store',
+    name: 'Dollar Tree',
+    address: '7900 NW 27th Ave Ste B4, Miami, FL 33147',
+    lat: 25.8479,
+    lng: -80.2492,
+    rating: 3.8,
+    reviews: 56,
+    hours: 'Mon–Sat 9am–9pm, Sun 10am–8pm',
+    notes: 'In Northside Shopping Center; high foot-traffic location. Phone: 645-225-3242'
+  },
+  {
+    id: 'ds_005',
+    category: 'dollar_store',
+    name: 'Dollar General',
+    address: '3105 NW 62nd St, Miami, FL 33147',
+    lat: 25.8365,
+    lng: -80.2492,
+    rating: 3.6,
+    reviews: 33,
+    hours: 'Mon–Sun 8am–10pm',
+    notes: 'Dollar General in mid-zip area serving NW 62nd St residential blocks'
+  },
+
+  // ── LAUNDROMATS ────────────────────────────────────────────────────────────
+  {
+    id: 'lm_001',
+    category: 'laundromat',
+    name: 'LaundroMart',
+    address: '2205 NW 79th St, Miami, FL 33147',
+    lat: 25.8490,
+    lng: -80.2432,
+    rating: 4.1,
+    reviews: 25,
+    hours: 'Open 24 hours, 7 days',
+    notes: '24-hour branded laundromat on 79th St; high foot traffic. Phone: 877-446-9274'
+  },
+  {
+    id: 'lm_002',
+    category: 'laundromat',
+    name: 'Spa Laundromat',
+    address: '2145 NW 62nd St, Miami, FL 33147',
+    lat: 25.8362,
+    lng: -80.2413,
+    rating: 4.0,
+    reviews: 19,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: 'On NE corner of NW 62nd St & NW 22nd Ave; self-service and wash-and-fold. Phone: 786-452-0325'
+  },
+  {
+    id: 'lm_004',
+    category: 'laundromat',
+    name: 'Laundromat – NW 54th St',
+    address: '2561 NW 54th St, Miami, FL 33142',
+    lat: 25.8301,
+    lng: -80.2461,
+    rating: 3.7,
+    reviews: 8,
+    hours: 'Mon–Sun 7am–9pm',
+    notes: 'Just south of 33147 boundary; serves Liberty City residents. Adjacent spillover — ZIP 33142 but within map range. Phone: 305-640-5239'
+  },
+  {
+    id: 'lm_005',
+    category: 'laundromat',
+    name: 'Coin Laundry – NW 7th Ave',
+    address: '7900 NW 27th Ave, Miami, FL 33147',
+    lat: 25.8481,
+    lng: -80.2493,
+    rating: 3.8,
+    reviews: 10,
+    hours: 'Mon–Sun 7am–10pm',
+    notes: 'Near Northside Shopping Center; convenient for surrounding neighborhood'
+  }
+
+    ]
+  },
+
+  '33463': {
+    label: 'ZIP 33463 — Lake Worth / Greenacres',
+    map: {
+      latMin: 26.565, latMax: 26.630, latRange: 0.065,
+      lngMin: -80.175, lngMax: -80.095, lngRange: 0.080,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'Jog Rd',         lng: -80.158 },
+        { name: 'Military Trail',  lng: -80.127 },
+        { name: 'Congress Ave',    lng: -80.096 }
+      ],
+      ew: [
+        { name: 'Hypoluxo Rd',   lat: 26.623 },
+        { name: '10th Ave N',    lat: 26.617 },
+        { name: 'Lake Worth Rd', lat: 26.607 },
+        { name: 'Lantana Rd',    lat: 26.571 }
+      ]
+    },
+    streets: [
+      { type: 'ew', y: 56,  weight: 2, label: 'Hypoluxo Rd',   labelX: 42, labelY: 52  },
+      { type: 'ew', y: 104, weight: 2, label: '10th Ave N',     labelX: 42, labelY: 100 },
+      { type: 'ew', y: 184, weight: 3, label: 'Lake Worth Rd',  labelX: 42, labelY: 180 },
+      { type: 'ew', y: 472, weight: 2, label: 'Lantana Rd',     labelX: 42, labelY: 468 },
+      { type: 'ns', x: 149, weight: 2, label: 'Jog Rd'         },
+      { type: 'ns', x: 420, weight: 3, label: 'Military Trail' },
+      { type: 'ns', x: 691, weight: 2, label: 'Congress Ave'   }
+    ],
+    demographics: {
+      areaName: 'Lake Worth / Greenacres',
+      population: '~65,000',
+      foreignBorn: { pct: '~42%', count: '~27,000 residents' },
+      unbanked:    { pct: '~15%', note: 'vs. 5.9% national avg' },
+      poverty:     { pct: '14%',  medianHHI: '$74,000' },
+      diaspora: [
+        { name: 'Hispanic / Latino',                            pct: '~39%'  },
+        { name: 'Black / African American',                     pct: '~32%'  },
+        { name: 'Caribbean (Grenadian, Haitian, Barbadian)',    pct: '~14%'  },
+        { name: 'Guatemalan (incl. Maya-indigenous)',           pct: '~4%'   },
+        { name: 'Honduran',                                     pct: '~8%'   },
+        { name: 'Per Capita Income',                            pct: '$35,000' }
+      ],
+      context: 'ZIP 33463 is one of Palm Beach County\'s highest-density remittance corridors, with ~42% of residents born outside the US — roughly 3× the national average. The Lake Worth Road strip serves a working-class immigrant community with strong Caribbean (Grenadian, Haitian, Barbadian) and Central American (Guatemalan-Maya, Honduran, Salvadoran) sending populations. An above-average unbanked rate (~15%) and dense check-cashing infrastructure on Lake Worth Road signal sustained cash-based demand for in-person money transfer services.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ────────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union @ Regions Bank',
+        address: '6401 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6073, lng: -80.1505,
+        rating: null, reviews: null,
+        hours: 'Mon–Thu 9am–5pm, Fri 9am–6pm',
+        notes: 'WU at bank branch; typically send-only'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union @ The Check Cashing Store',
+        address: '4647 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1225,
+        rating: 4.9, reviews: 180,
+        hours: 'Mon–Sat 9am–7pm',
+        notes: 'Full-service financial center; check cashing, payday loans, currency exchange. Phone: (561) 557-1726'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union @ Family Dollar',
+        address: '4640 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1218,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 9am–9pm',
+        notes: 'Inside Family Dollar/Dollar Tree complex. Phone: (561) 966-5550',
+        bigbox: true
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union Agent (Melaleuca Ln)',
+        address: '6430 Melaleuca Ln, Lake Worth, FL 33463',
+        lat: 26.6118, lng: -80.1280,
+        rating: null, reviews: null,
+        hours: 'Mon–Fri 9am–6pm, Sat 9am–2pm, Sun 9am–6pm',
+        notes: 'Phone: (561) 420-6191'
+      },
+      {
+        id: 'wu_005',
+        category: 'western_union',
+        name: 'Western Union (S Military Trail South)',
+        address: '3365 S Military Trl, Lake Worth, FL 33463',
+        lat: 26.5815, lng: -80.1268,
+        rating: null, reviews: null,
+        hours: 'Unknown',
+        notes: 'Phone: (561) 641-5353; southern Military Trail corridor'
+      },
+      {
+        id: 'wu_006',
+        category: 'western_union',
+        name: 'Western Union @ Publix Military Crossing',
+        address: '4849 S Military Trl, Lake Worth, FL 33463',
+        lat: 26.6118, lng: -80.1270,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 7am–10pm',
+        notes: 'WU at Publix. Phone: (561) 304-2727',
+        bigbox: true
+      },
+      {
+        id: 'wu_007',
+        category: 'western_union',
+        name: 'Western Union @ Walgreens',
+        address: '6025 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1430,
+        rating: null, reviews: null,
+        hours: 'Mon–Fri 8am–9pm, Sat–Sun 9am–6pm',
+        notes: 'Phone: (561) 965-3060; Walgreens exclusive WU partner',
+        bigbox: true
+      },
+
+      // ── MONEYGRAM ────────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram @ Walmart Supercenter',
+        address: '4545 Hypoluxo Rd, Lake Worth, FL 33463',
+        lat: 26.6234, lng: -80.1220,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 8am–8pm',
+        notes: 'Walmart #1398 MoneyCenter. Phone: (561) 642-6005',
+        bigbox: true
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram @ Bravo Supermarket',
+        address: '5851 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1380,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 7am–10pm',
+        notes: 'Pan-Caribbean/Latino supermarket (fka Jumbo). Phone: (561) 963-2230'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram @ Monterrey Market',
+        address: '5100 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1305,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 8am–9pm',
+        notes: 'Latino supermarket; heavy Central American clientele'
+      },
+      {
+        id: 'mg_004',
+        category: 'moneygram',
+        name: 'MoneyGram @ Flamingo Check Cashing',
+        address: '6159 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6073, lng: -80.1455,
+        rating: null, reviews: null,
+        hours: 'Mon–Sat 9am–6pm',
+        notes: 'Check cashing + MoneyGram. Phone: (561) 328-7159'
+      },
+
+      // ── RIA MONEY TRANSFER ───────────────────────────────────────────────────
+      {
+        id: 'ria_001',
+        category: 'ria',
+        name: 'Ria Money Transfer (S Military Trail)',
+        address: '3280 S Military Trl, Lake Worth, FL 33463',
+        lat: 26.5820, lng: -80.1268,
+        rating: null, reviews: null,
+        hours: 'Call (561) 642-7410',
+        notes: 'Confirmed Ria agent; southern Military Trail corridor'
+      },
+      {
+        id: 'ria_002',
+        category: 'ria',
+        name: 'Ria Money Transfer @ El Bodegon Grocery',
+        address: '1910 Lake Worth Rd, Lake Worth, FL 33461',
+        lat: 26.6035, lng: -80.1050,
+        rating: null, reviews: null,
+        hours: 'Call (561) 967-6999',
+        notes: 'Ria agent inside Latin grocery; adjacent spillover — ZIP 33461 but within map range'
+      },
+
+      // ── FINANCIAL SERVICES ───────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: 'The Check Cashing Store / Money Mart',
+        address: '4647 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1225,
+        rating: 4.9, reviews: 180,
+        hours: 'Mon–Sat 9am–7pm',
+        notes: 'Check cashing, payday loans, WU, currency exchange. Phone: (561) 557-1726'
+      },
+      {
+        id: 'fin_002',
+        category: 'financial_services',
+        name: 'Flamingo Check Cashing',
+        address: '6159 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6073, lng: -80.1455,
+        rating: null, reviews: null,
+        hours: 'Mon–Sat 9am–6pm',
+        notes: 'Check cashing + MoneyGram. Phone: (561) 328-7159'
+      },
+      {
+        id: 'fin_003',
+        category: 'financial_services',
+        name: 'The Check Cashing Store (S Military Trail)',
+        address: '7132 S Military Trl, Lake Worth, FL 33463',
+        lat: 26.5720, lng: -80.1268,
+        rating: null, reviews: null,
+        hours: 'Mon–Sat 9am–7pm',
+        notes: 'Second location; southern Military Trail corridor'
+      },
+      {
+        id: 'fin_004',
+        category: 'financial_services',
+        name: 'Walmart Money Center',
+        address: '4545 Hypoluxo Rd, Lake Worth, FL 33463',
+        lat: 26.6234, lng: -80.1220,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 8am–8pm',
+        notes: 'Check cashing, money transfers, MoneyGram, bill pay',
+        bigbox: true
+      },
+
+      // ── ETHNIC GROCERY ───────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: 'Presidente Supermarket #45',
+        address: '6406 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6073, lng: -80.1512,
+        rating: null, reviews: null,
+        hours: 'Mon–Sat 7am–9:45pm, Sun 7am–8:45pm',
+        notes: 'Major Latino/Caribbean chain. Phone: (561) 433-4831'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: 'Bravo Supermarket',
+        address: '5851 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1380,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 7am–10pm',
+        notes: 'Formerly Jumbo Supermarket; Pan-Caribbean/Latino. Phone: (561) 963-2230'
+      },
+      {
+        id: 'eg_003',
+        category: 'ethnic_grocery',
+        name: 'Monterrey Market',
+        address: '5100 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1305,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 8am–9pm',
+        notes: 'Latino supermarket; Guatemalan and Central American clientele'
+      },
+      {
+        id: 'eg_004',
+        category: 'ethnic_grocery',
+        name: 'Azteca Food Mart',
+        address: '4511 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1202,
+        rating: null, reviews: null,
+        hours: 'Mon–Sat 6am–8pm',
+        notes: 'Latin/Mexican convenience store. Phone: (561) 642-6343'
+      },
+      {
+        id: 'eg_005',
+        category: 'ethnic_grocery',
+        name: 'Asian Market',
+        address: '5891 S Military Trl, Lake Worth, FL 33463',
+        lat: 26.6003, lng: -80.1268,
+        rating: 4.5, reviews: 53,
+        hours: 'Mon–Sun 9am–7pm',
+        notes: 'International grocery; high ratings'
+      },
+
+      // ── DOLLAR STORES ────────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Family Dollar / Dollar Tree',
+        address: '4640 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1218,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 8am–10pm',
+        notes: 'Combined FD/DT location. Phone: (561) 530-5391'
+      },
+      {
+        id: 'ds_002',
+        category: 'dollar_store',
+        name: 'Dollar General',
+        address: '5859 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1382,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 8am–10pm',
+        notes: 'Phone: (561) 508-8015'
+      },
+      {
+        id: 'ds_003',
+        category: 'dollar_store',
+        name: 'Dollar Tree (Lake Worth Plaza)',
+        address: '6400 Lake Worth Rd, Lake Worth, FL 33463',
+        lat: 26.6073, lng: -80.1505,
+        rating: null, reviews: null,
+        hours: 'Mon–Sat 9am–9pm, Sun 10am–8pm',
+        notes: 'Separate from combo store on eastern end'
+      },
+      {
+        id: 'ds_004',
+        category: 'dollar_store',
+        name: 'Family Dollar (10th Ave N)',
+        address: '5055 10th Ave N, Greenacres, FL 33463',
+        lat: 26.6173, lng: -80.1305,
+        rating: null, reviews: null,
+        hours: 'Mon–Sun 8am–10pm',
+        notes: 'Phone: (561) 486-0769; 10th Ave N corridor'
+      },
+
+      // ── LAUNDROMATS ──────────────────────────────────────────────────────────
+      {
+        id: 'lm_001',
+        category: 'laundromat',
+        name: 'Lake Worth Laundromats',
+        address: '6416 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6073, lng: -80.1508,
+        rating: null, reviews: null,
+        hours: 'Mon–Fri 8am–10pm',
+        notes: 'Free WiFi, coin changer. Phone: (561) 642-7323'
+      },
+      {
+        id: 'lm_002',
+        category: 'laundromat',
+        name: 'Laundry Stop of Greenacres',
+        address: '4996 10th Ave N, Greenacres, FL 33463',
+        lat: 26.6173, lng: -80.1300,
+        rating: null, reviews: null,
+        hours: 'Mon–Fri 7am–9:30pm, Sat–Sun 6am–9:30pm',
+        notes: 'Drop-off/pick-up + self-service. Phone: (561) 439-5565'
+      }
+
+    ]
+  }
+};
+
+let activeZip = '33147';
+function getZip() { return ZIP_CONFIG[activeZip]; }
+
+function selectZip(zip) {
+  activeZip = zip;
+  _zonesCache = null;
+  activeToggles.clear();
+  Object.keys(CATEGORIES).forEach(k => activeToggles.add(k));
+  activeToggles.add('zones_expand');
+  activeToggles.add('zones_monitor');
+  activeToggles.add('zones_reduce');
+  renderToggles();
+  renderStreets();
+  renderPins();
+  renderZones();
+  renderScorecard();
+  renderNarrative();
+  renderDemographics();
+}
+
+// ─── COORDINATE HELPER ────────────────────────────────────────────────────────
+function latLngToSVG(lat, lng) {
+  const m = getZip().map;
+  return {
+    x: Math.min(m.svgW, Math.max(0, ((lng - m.lngMin) / m.lngRange) * m.svgW)),
+    y: Math.min(m.svgH, Math.max(0, (1 - (lat - m.latMin) / m.latRange) * m.svgH))
+  };
+}
+
+// ─── PIN RENDERING ────────────────────────────────────────────────────────────
+function renderPins() {
+  const layer = document.getElementById('pins-layer');
+  layer.innerHTML = '';
+  getZip().stores.forEach(s => {
+    const cfg = CATEGORIES[s.category];
+    if (!cfg) return;
+    const { x, y } = latLngToSVG(s.lat, s.lng);
+    const r = cfg.r;
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('data-id', s.id);
+    g.setAttribute('data-cat', s.category);
+    g.setAttribute('class', 'pin');
+    g.style.cursor = 'pointer';
+    // Drop shape (triangle below circle)
+    const drop = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    const tipY = y + r + 8;
+    drop.setAttribute('points', `${x - r * 0.5},${y + r * 0.6} ${x + r * 0.5},${y + r * 0.6} ${x},${tipY}`);
+    drop.setAttribute('fill', cfg.color);
+    // Circle
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', cfg.color);
+    circle.setAttribute('stroke', '#0f1117');
+    circle.setAttribute('stroke-width', '1.5');
+    g.appendChild(drop);
+    g.appendChild(circle);
+    g.addEventListener('mouseenter', () => g.style.filter = 'brightness(1.25)');
+    g.addEventListener('mouseleave', () => g.style.filter = '');
+    g.addEventListener('click', () => showPin(s));
+    if (s.bigbox) g.style.opacity = '0.35';
+    layer.appendChild(g);
+    if (!activeToggles.has(s.category)) g.style.display = 'none';
+  });
+}
+
+// ─── TOGGLE BUTTONS ───────────────────────────────────────────────────────────
+const activeToggles = new Set(Object.keys(CATEGORIES));
+activeToggles.add('zones_expand');
+activeToggles.add('zones_monitor');
+activeToggles.add('zones_reduce');
+
+function makeRow(label) {
+  const row = document.createElement('div');
+  row.className = 'toggle-row';
+  const lbl = document.createElement('span');
+  lbl.className = 'toggle-row-label';
+  lbl.textContent = label;
+  row.appendChild(lbl);
+  return row;
+}
+
+function renderToggles() {
+  const bar = document.getElementById('toggle-bar');
+  bar.innerHTML = '';
+
+  const row1 = makeRow('Remittance Players');
+  ['western_union', 'moneygram', 'ria'].forEach(cat => {
+    const cfg = CATEGORIES[cat];
+    const btn = document.createElement('button');
+    btn.className = 'toggle-btn';
+    btn.dataset.cat = cat;
+    btn.textContent = '● ' + cfg.label;
+    btn.style.background = cfg.color;
+    btn.style.color = '#000';
+    btn.addEventListener('click', () => toggleCategory(cat, btn));
+    row1.appendChild(btn);
+  });
+  bar.appendChild(row1);
+
+  const row2 = makeRow('Relevant Businesses');
+  ['financial_services', 'ethnic_grocery', 'dollar_store', 'laundromat'].forEach(cat => {
+    const cfg = CATEGORIES[cat];
+    const btn = document.createElement('button');
+    btn.className = 'toggle-btn';
+    btn.dataset.cat = cat;
+    btn.textContent = '● ' + cfg.label;
+    btn.style.background = cfg.color;
+    btn.style.color = '#fff';
+    btn.addEventListener('click', () => toggleCategory(cat, btn));
+    row2.appendChild(btn);
+  });
+  bar.appendChild(row2);
+
+  const row3 = makeRow('Zones');
+  [
+    { key: 'zones_expand',  label: '◎ Expansion Zones',  border: '#3fb950', color: '#3fb950' },
+    { key: 'zones_monitor', label: '◎ Monitor Zones',    border: '#f0c040', color: '#f0c040' },
+    { key: 'zones_reduce',  label: '◎ Saturation Zones', border: '#f85149', color: '#f85149' }
+  ].forEach(({ key, label, border, color }) => {
+    const btn = document.createElement('button');
+    btn.className = 'toggle-btn zone-toggle';
+    btn.dataset.cat = key;
+    btn.textContent = label;
+    btn.style.border = `1px solid ${border}`;
+    btn.style.color = color;
+    btn.addEventListener('click', () => toggleZones(key, btn));
+    row3.appendChild(btn);
+  });
+  bar.appendChild(row3);
+}
+
+function toggleCategory(cat, btn) {
+  if (activeToggles.has(cat)) {
+    activeToggles.delete(cat);
+    btn.style.opacity = '0.35';
+  } else {
+    activeToggles.add(cat);
+    btn.style.opacity = '1';
+  }
+  document.querySelectorAll(`.pin[data-cat="${cat}"]`).forEach(el => {
+    el.style.display = activeToggles.has(cat) ? '' : 'none';
+  });
+}
+
+function toggleZones(key, btn) {
+  if (activeToggles.has(key)) {
+    activeToggles.delete(key);
+    btn.style.opacity = '0.35';
+  } else {
+    activeToggles.add(key);
+    btn.style.opacity = '1';
+  }
+  document.querySelectorAll(`.zone-ellipse[data-type="${key}"]`).forEach(el => {
+    el.style.display = activeToggles.has(key) ? '' : 'none';
+  });
+}
+
+// ─── PIN DETAIL PANEL ─────────────────────────────────────────────────────────
+function showPin(store) {
+  const cfg = CATEGORIES[store.category];
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.name + ' ' + store.address)}`;
+  const stars = store.rating ? `⭐ ${store.rating} · ${store.reviews} reviews` : '';
+  const hours = store.hours ? `🕐 ${store.hours}` : '';
+  const notes = store.notes ? `<div class="pin-notes">${store.notes}</div>` : '';
+  document.getElementById('pin-detail').innerHTML = `
+    <div class="pin-name">${store.name}</div>
+    <div class="pin-category-badge" style="background:${cfg.color};color:${cfg.role==='primary'?'#000':'#fff'}">${cfg.label}</div>
+    <div class="pin-address">${store.address}</div>
+    ${stars ? `<div class="pin-meta">${stars}</div>` : ''}
+    ${hours ? `<div class="pin-meta">${hours}</div>` : ''}
+    ${notes}
+    <a class="pin-maps-link" href="${mapsUrl}" target="_blank" rel="noopener">↗ Open in Google Maps</a>
+  `;
+}
+
+// ─── SPATIAL HELPERS ──────────────────────────────────────────────────────────
+function nearestCorridor(lat, lng) {
+  const { ns, ew } = getZip().corridors;
+  if (!ns.length || !ew.length) return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  const nsStreet = ns.reduce((a, b) => Math.abs(lng - a.lng) < Math.abs(lng - b.lng) ? a : b);
+  const ewStreet = ew.reduce((a, b) => Math.abs(lat - a.lat) < Math.abs(lat - b.lat) ? a : b);
+  return `${nsStreet.name} @ ${ewStreet.name}`;
+}
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 3958.8;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// ─── ZONE COMPUTATION ─────────────────────────────────────────────────────────
+let _zonesCache = null;
+function computeZones() {
+  if (_zonesCache) return _zonesCache;
+  const allStores    = getZip().stores;
+  const demandStores = allStores.filter(s => DEMAND_WEIGHTS[s.category] !== undefined && !s.bigbox);
+  const competitors  = allStores.filter(s => (s.category === 'moneygram' || s.category === 'ria') && !s.bigbox);
+  const wuStores     = allStores.filter(s => s.category === 'western_union' && !s.bigbox);
+
+  const visited = new Set();
+  const clusters = [];
+  demandStores.forEach(seed => {
+    if (visited.has(seed.id)) return;
+    const members = demandStores.filter(s =>
+      haversine(seed.lat, seed.lng, s.lat, s.lng) <= CLUSTER_RADIUS_MI
+    );
+    members.forEach(m => visited.add(m.id));
+    const centroid = {
+      lat: members.reduce((sum, m) => sum + m.lat, 0) / members.length,
+      lng: members.reduce((sum, m) => sum + m.lng, 0) / members.length
+    };
+    const baseScore = members.reduce((sum, m) => sum + (DEMAND_WEIGHTS[m.category] || 0), 0);
+    const compBonus = competitors.filter(c =>
+      haversine(centroid.lat, centroid.lng, c.lat, c.lng) <= COMPETITOR_RADIUS_MI
+    ).length * COMPETITOR_BONUS;
+    const adjDemand = baseScore + compBonus;
+    const wuCount = wuStores.filter(w =>
+      haversine(centroid.lat, centroid.lng, w.lat, w.lng) <= WU_RADIUS_MI
+    ).length;
+
+    let type = null;
+    if (adjDemand >= HIGH_DEMAND_THRESHOLD && wuCount === 0) type = 'zones_expand';
+    else if (adjDemand >= HIGH_DEMAND_THRESHOLD && wuCount >= 2) type = 'zones_monitor';
+    else if (adjDemand < LOW_DEMAND_THRESHOLD  && wuCount >= 2) type = 'zones_reduce';
+
+    clusters.push({ centroid, members, adjDemand, wuCount, type, compBonus, label: nearestCorridor(centroid.lat, centroid.lng) });
+  });
+
+  // Second pass: seed from WU positions to catch self-cannibalization clusters
+  // that have no nearby demand signals (so they'd never appear in pass 1)
+  const wuVisited = new Set();
+  wuStores.forEach(seed => {
+    if (wuVisited.has(seed.id)) return;
+    const wuCluster = wuStores.filter(w =>
+      haversine(seed.lat, seed.lng, w.lat, w.lng) <= WU_CANNIBALIZATION_RADIUS_MI
+    );
+    wuCluster.forEach(w => wuVisited.add(w.id));
+    if (wuCluster.length < 2) return;
+    const centroid = {
+      lat: wuCluster.reduce((sum, w) => sum + w.lat, 0) / wuCluster.length,
+      lng: wuCluster.reduce((sum, w) => sum + w.lng, 0) / wuCluster.length
+    };
+    const nearbyDemand = demandStores.filter(s =>
+      haversine(centroid.lat, centroid.lng, s.lat, s.lng) <= CLUSTER_RADIUS_MI
+    );
+    const baseScore = nearbyDemand.reduce((sum, s) => sum + (DEMAND_WEIGHTS[s.category] || 0), 0);
+    const compBonus = competitors.filter(c =>
+      haversine(centroid.lat, centroid.lng, c.lat, c.lng) <= COMPETITOR_RADIUS_MI
+    ).length * COMPETITOR_BONUS;
+    const adjDemand = baseScore + compBonus;
+    // 3+ WU in tight radius = cannibalization regardless of demand; 2 WU + low demand also flagged
+    if (wuCluster.length >= 3 || adjDemand < LOW_DEMAND_THRESHOLD) {
+      clusters.push({ centroid, members: wuCluster, adjDemand, wuCount: wuCluster.length, type: 'zones_reduce', compBonus, source: 'wu_seeded', label: nearestCorridor(centroid.lat, centroid.lng) });
+    }
+  });
+
+  _zonesCache = clusters.filter(c => c.type !== null);
+  return _zonesCache;
+}
+
+// ─── ZONE RENDERING ───────────────────────────────────────────────────────────
+const ZONE_CONFIG = {
+  zones_expand:  { stroke: 'rgba(63,185,80,0.6)',  label: 'Underserved — Open Here' },
+  zones_monitor: { stroke: 'rgba(240,192,64,0.6)', label: 'High Demand — Monitor' },
+  zones_reduce:  { stroke: 'rgba(248,81,73,0.6)',  label: 'WU Oversaturated — Review' }
+};
+
+function renderZones() {
+  const layer = document.getElementById('zones-layer');
+  layer.innerHTML = '';
+
+  let defs = document.getElementById('zone-defs');
+  if (!defs) {
+    defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    defs.id = 'zone-defs';
+    document.getElementById('map-svg').insertBefore(defs, layer);
+  }
+  defs.innerHTML = '';
+
+  const zones = computeZones();
+  zones.forEach((zone, i) => {
+    const cfg = ZONE_CONFIG[zone.type];
+    if (!cfg) return;
+    const { x, y } = latLngToSVG(zone.centroid.lat, zone.centroid.lng);
+    const rx = Math.max(40, 40 + zone.members.length * 8);
+    const ry = rx * 0.65;
+
+    const gradId = `zone-grad-${i}`;
+    const grad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+    grad.setAttribute('id', gradId);
+    grad.innerHTML = `
+      <stop offset="0%"   stop-color="${cfg.stroke}" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="${cfg.stroke}" stop-opacity="0"/>
+    `;
+    defs.appendChild(grad);
+
+    const ellipse = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+    ellipse.setAttribute('cx', x);
+    ellipse.setAttribute('cy', y);
+    ellipse.setAttribute('rx', rx);
+    ellipse.setAttribute('ry', ry);
+    ellipse.setAttribute('fill', `url(#${gradId})`);
+    ellipse.setAttribute('stroke', cfg.stroke);
+    ellipse.setAttribute('stroke-width', '1');
+    ellipse.setAttribute('class', 'zone-ellipse');
+    ellipse.setAttribute('data-type', zone.type);
+    if (!activeToggles.has(zone.type)) ellipse.style.display = 'none';
+    layer.appendChild(ellipse);
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y - ry - 5);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', cfg.stroke);
+    text.setAttribute('font-size', '9');
+    text.setAttribute('font-family', 'monospace');
+    text.setAttribute('class', 'zone-ellipse');
+    text.setAttribute('data-type', zone.type);
+    text.textContent = zone.label;
+    if (!activeToggles.has(zone.type)) text.style.display = 'none';
+    layer.appendChild(text);
+  });
+}
+
+// ─── SCORECARD ────────────────────────────────────────────────────────────────
+function renderScorecard() {
+  const zones = computeZones();
+  const expand  = zones.filter(z => z.type === 'zones_expand');
+  const monitor = zones.filter(z => z.type === 'zones_monitor');
+  const reduce  = zones.filter(z => z.type === 'zones_reduce');
+
+  const allStores = getZip().stores;
+  const wuCount  = allStores.filter(s => s.category === 'western_union').length;
+  const mgCount  = allStores.filter(s => s.category === 'moneygram').length;
+  const riaCount = allStores.filter(s => s.category === 'ria').length;
+
+  const zoneRow = (zone, idx) => `
+    <div class="scorecard-row">
+      <strong>${idx + 1}.</strong> ${zone.label}
+      <div class="scorecard-sub">Demand: ${zone.adjDemand} · WU nearby: ${zone.wuCount} · ${zone.members.length} signals</div>
+    </div>`;
+
+  document.getElementById('scorecard').innerHTML = `
+    <div class="scorecard-label">ZONE ANALYSIS</div>
+    ${expand.length ? `<div class="scorecard-section expand"><div class="scorecard-title">▲ EXPAND (${expand.length})</div>${expand.map(zoneRow).join('')}</div>` : ''}
+    ${monitor.length ? `<div class="scorecard-section monitor"><div class="scorecard-title">⚠ MONITOR (${monitor.length})</div>${monitor.map(zoneRow).join('')}</div>` : ''}
+    ${reduce.length ? `<div class="scorecard-section reduce"><div class="scorecard-title">▼ REDUCE (${reduce.length})</div>${reduce.map(zoneRow).join('')}</div>` : ''}
+    ${!expand.length && !monitor.length && !reduce.length ? '<div class="scorecard-empty">No zones detected with current thresholds.</div>' : ''}
+    <div class="scorecard-counts">
+      <div class="scorecard-label" style="margin-top:10px;margin-bottom:6px">PROVIDER COUNT</div>
+      <div class="count-row"><span style="color:#F5C518">●</span> Western Union <strong>${wuCount}</strong></div>
+      <div class="count-row"><span style="color:#004B87">●</span> MoneyGram <strong>${mgCount}</strong></div>
+      <div class="count-row"><span style="color:#E31837">●</span> Ria <strong>${riaCount}</strong></div>
+    </div>
+  `;
+}
+
+// ─── NARRATIVE ────────────────────────────────────────────────────────────────
+function renderNarrative() {
+  const zones = computeZones();
+  const expand  = zones.filter(z => z.type === 'zones_expand');
+  const monitor = zones.filter(z => z.type === 'zones_monitor');
+  const reduce  = zones.filter(z => z.type === 'zones_reduce');
+
+  const allStores2   = getZip().stores;
+  const wuCount  = allStores2.filter(s => s.category === 'western_union').length;
+  const mgCount  = allStores2.filter(s => s.category === 'moneygram').length;
+  const riaCount = allStores2.filter(s => s.category === 'ria').length;
+  const totalSignals = allStores2.filter(s => DEMAND_WEIGHTS[s.category] !== undefined).length;
+
+  const expandRows = expand.map((z, i) => `
+    <div class="narrative-item">
+      <div class="narrative-rank">${i + 1}</div>
+      <div>
+        <div class="narrative-item-title">${z.label}</div>
+        <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} · ${z.members.length} demand signals · ${z.compBonus > 0 ? `+${z.compBonus} competitor validation` : 'No competitor nearby'} · 0 WU within ${WU_RADIUS_MI}mi</div>
+      </div>
+    </div>`).join('') || '<div class="narrative-empty">No expansion zones identified with current thresholds.</div>';
+
+  const reduceRows = reduce.map((z, i) => `
+    <div class="narrative-item">
+      <div class="narrative-rank">${i + 1}</div>
+      <div>
+        <div class="narrative-item-title">${z.label}</div>
+        <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} (below threshold of ${LOW_DEMAND_THRESHOLD}) · ${z.wuCount} WU within ${WU_RADIUS_MI}mi · Low market justification for WU density</div>
+      </div>
+    </div>`).join('') || '<div class="narrative-empty">No saturation concerns with current thresholds.</div>';
+
+  const monitorRows = monitor.map((z, i) => `
+    <div class="narrative-item">
+      <div class="narrative-rank">${i + 1}</div>
+      <div>
+        <div class="narrative-item-title">${z.label}</div>
+        <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} · ${z.members.length} demand signals · ${z.compBonus > 0 ? `+${z.compBonus} competitor validation` : 'No competitor nearby'} · ${z.wuCount} WU within ${WU_RADIUS_MI}mi</div>
+      </div>
+    </div>`).join('') || '<div class="narrative-empty">No monitor zones identified.</div>';
+
+  document.getElementById('narrative').innerHTML = `
+    <div class="narrative-header">COMPETITIVE INTELLIGENCE SUMMARY — ZIP ${activeZip}</div>
+    <div class="narrative-grid narrative-grid-3">
+      <div class="narrative-col expand">
+        <div class="narrative-col-title">▲ OPEN NEW LOCATIONS</div>
+        ${expandRows}
+      </div>
+      <div class="narrative-col monitor">
+        <div class="narrative-col-title">⚠ MONITOR — HIGH DENSITY</div>
+        ${monitorRows}
+      </div>
+      <div class="narrative-col reduce">
+        <div class="narrative-col-title">▼ REDUCE FOOTPRINT</div>
+        ${reduceRows}
+      </div>
+    </div>
+    <div class="narrative-context">
+      ZIP 33147 has ${wuCount + mgCount + riaCount} remittance locations across 3 providers.
+      Western Union: ${wuCount} · MoneyGram: ${mgCount} · Ria: ${riaCount}.
+      ${totalSignals} demand-signal businesses mapped (ethnic groceries, financial services, dollar stores, laundromats).
+      ${expand.length > 0 ? `${expand.length} expansion zone${expand.length > 1 ? 's' : ''} identified — high demand, no WU coverage.` : 'No clear expansion gaps identified.'}
+      ${monitor.length > 0 ? `${monitor.length} monitor zone${monitor.length > 1 ? 's' : ''} flagged — high demand with multiple WU locations; watch for competitor entry.` : ''}
+      ${reduce.length > 0 ? `${reduce.length} saturation zone${reduce.length > 1 ? 's' : ''} flagged — WU density exceeds demand justification.` : 'No saturation concerns identified.'}
+    </div>
+  `;
+}
+
+// ─── STREET GRID ──────────────────────────────────────────────────────────────
+function renderStreets() {
+  const layer = document.getElementById('streets');
+  layer.innerHTML = '';
+  const m = getZip().map;
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  getZip().streets.forEach(s => {
+    const line = document.createElementNS(SVG_NS, 'line');
+    if (s.type === 'ew') {
+      line.setAttribute('x1', 0);      line.setAttribute('y1', s.y);
+      line.setAttribute('x2', m.svgW); line.setAttribute('y2', s.y);
+    } else {
+      line.setAttribute('x1', s.x); line.setAttribute('y1', 0);
+      line.setAttribute('x2', s.x); line.setAttribute('y2', m.svgH);
+    }
+    line.setAttribute('stroke', '#2a3340');
+    line.setAttribute('stroke-width', s.weight);
+    layer.appendChild(line);
+    const text = document.createElementNS(SVG_NS, 'text');
+    text.setAttribute('fill', '#3a4a5a');
+    text.setAttribute('font-size', '9');
+    text.setAttribute('font-family', 'monospace');
+    if (s.type === 'ew') {
+      text.setAttribute('x', s.labelX);
+      text.setAttribute('y', s.labelY);
+    } else {
+      const midY = m.svgH / 2;
+      text.setAttribute('x', s.x);
+      text.setAttribute('y', midY);
+      text.setAttribute('transform', `rotate(-90 ${s.x} ${midY})`);
+      text.setAttribute('text-anchor', 'middle');
+    }
+    text.textContent = s.label;
+    layer.appendChild(text);
+  });
+}
+
+// ─── DEMOGRAPHICS ─────────────────────────────────────────────────────────────
+function renderDemographics() {
+  const d = getZip().demographics;
+  if (!d.population) { document.getElementById('demographics').innerHTML = ''; return; }
+  document.getElementById('demographics').innerHTML = `
+    <div class="demo-header">ZIP ${activeZip} · Population Profile · Source: U.S. Census ACS 2019–2023</div>
+    <div class="demo-grid">
+      <div class="demo-card">
+        <div class="demo-card-label">Total Population</div>
+        <div class="demo-card-value">${d.population}</div>
+        <div class="demo-card-sub">${d.areaName}</div>
+      </div>
+      <div class="demo-card highlight">
+        <div class="demo-card-label">Foreign-Born</div>
+        <div class="demo-card-value">${d.foreignBorn.pct}</div>
+        <div class="demo-card-sub">${d.foreignBorn.count}</div>
+      </div>
+      <div class="demo-card highlight">
+        <div class="demo-card-label">Est. Unbanked Rate</div>
+        <div class="demo-card-value">${d.unbanked.pct}</div>
+        <div class="demo-card-sub">${d.unbanked.note}</div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-card-label">Poverty Rate</div>
+        <div class="demo-card-value">${d.poverty.pct}</div>
+        <div class="demo-card-sub">Median HHI ${d.poverty.medianHHI}</div>
+      </div>
+    </div>
+    <div class="demo-header" style="margin-top:4px">Diaspora Concentration</div>
+    <div class="demo-diaspora-grid">
+      ${d.diaspora.map(item => `
+        <div class="demo-diaspora-item">
+          <span class="demo-diaspora-name">${item.name}</span>
+          <span class="demo-diaspora-pct">${item.pct}</span>
+        </div>`).join('')}
+    </div>
+    <div class="demo-context">${d.context}</div>
+  `;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderToggles();
+  renderStreets();
+  renderPins();
+  renderZones();
+  renderScorecard();
+  renderNarrative();
+  renderDemographics();
+});
+</script>
+</body>
+</html>
