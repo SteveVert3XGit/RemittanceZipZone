@@ -95,6 +95,7 @@
       <select id="zip-select" onchange="selectZip(this.value)">
         <option value="33147">ZIP 33147 — Liberty City / NW Miami</option>
         <option value="33463">ZIP 33463 — Lake Worth / Greenacres</option>
+        <option value="33430">ZIP 33430 — Belle Glade</option>
       </select>
       <button id="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
     </div>
@@ -1035,6 +1036,36 @@ const ZIP_CONFIG = {
         hours: 'Mon–Sun 9am–7pm',
         notes: 'International grocery; high ratings'
       },
+      {
+        id: 'eg_006',
+        category: 'ethnic_grocery',
+        name: 'El Bodegon Grocery #4',
+        address: '4481 Lake Worth Rd, Greenacres, FL 33463',
+        lat: 26.6072, lng: -80.1208,
+        rating: null, reviews: null,
+        hours: 'Opens 8AM · (561) 967-2177',
+        notes: 'Latin grocery; also hosts Ria agent (ria_003)'
+      },
+      {
+        id: 'eg_007',
+        category: 'ethnic_grocery',
+        name: 'El Bodegon Grocery #5',
+        address: '1910 Lake Worth Rd, Lake Worth, FL 33461',
+        lat: 26.6035, lng: -80.1050,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 8AM · (561) 967-6999',
+        notes: 'Latin grocery; also hosts Ria agent (ria_002)'
+      },
+      {
+        id: 'eg_008',
+        category: 'ethnic_grocery',
+        name: 'El Bodegon Grocery #2',
+        address: '6128 S Congress Ave, Lake Worth, FL 33463',
+        lat: 26.5930, lng: -80.0962,
+        rating: null, reviews: null,
+        hours: 'Opens 8AM · (561) 967-7273',
+        notes: 'Latin grocery; also hosts Ria agent (ria_006)'
+      },
 
       // ── DOLLAR STORES ────────────────────────────────────────────────────────
       {
@@ -1098,6 +1129,357 @@ const ZIP_CONFIG = {
         rating: null, reviews: null,
         hours: 'Mon–Fri 7am–9:30pm, Sat–Sun 6am–9:30pm',
         notes: 'Drop-off/pick-up + self-service. Phone: (561) 439-5565'
+      }
+
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  '33430': {
+    label: 'ZIP 33430 — Belle Glade',
+    map: {
+      latMin: 26.660, latMax: 26.705, latRange: 0.045,
+      lngMin: -80.695, lngMax: -80.645, lngRange: 0.050,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'NW/SW 16th St', lng: -80.6832 },
+        { name: 'Main St',        lng: -80.6671 }
+      ],
+      ew: [
+        { name: 'Canal St N',   lat: 26.694  },
+        { name: 'MLK Jr Blvd', lat: 26.6826 }
+      ]
+    },
+    streets: [
+      { type: 'ew', y: 127, weight: 2, label: 'Canal St N',  labelX: 42, labelY: 123 },
+      { type: 'ew', y: 259, weight: 3, label: 'MLK Jr Blvd', labelX: 42, labelY: 255 },
+      { type: 'ns', x: 165, weight: 2, label: 'NW/SW 16th St' },
+      { type: 'ns', x: 391, weight: 3, label: 'Main St'       }
+    ],
+    demographics: {
+      areaName: 'Belle Glade — Palm Beach County',
+      population: '~17,500',
+      foreignBorn: { pct: '~41%', count: '~7,200 residents' },
+      unbanked:    { pct: '~40%', note: 'one of FL\'s highest rates; vs. 5.9% national avg' },
+      poverty:     { pct: '~39%', medianHHI: '$23,000' },
+      diaspora: [
+        { name: 'Haitian / Haitian-American',          pct: '~25%'  },
+        { name: 'Guatemalan (Maya Q\'anjob\'al / Mam)', pct: '~22%'  },
+        { name: 'Mexican',                             pct: '~15%'  },
+        { name: 'Black / African American',            pct: '~30%'  },
+        { name: 'Caribbean (Puerto Rican, Cuban)',      pct: '~8%'   },
+        { name: 'Per Capita Income',                   pct: '$14,000' }
+      ],
+      context: 'Belle Glade (ZIP 33430) is one of Florida\'s most remittance-dependent communities. Known as "Muck City" for its sugarcane industry, it has a ~39% poverty rate and an estimated ~40% unbanked rate — among the highest in the state. Nearly half the population is foreign-born, dominated by Haitian and Guatemalan Maya sending populations with strong family remittance obligations. MLK Jr Blvd and Main St form the entire commercial spine serving virtually all in-person financial services in the market.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ──────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union @ One Stop Supermarket',
+        address: '201 Dr M.L.K. Jr Blvd W, Belle Glade, FL 33430',
+        lat: 26.6826, lng: -80.6701,
+        rating: 3.0, reviews: 2,
+        hours: 'Open 24 hours',
+        notes: 'WU inside One Stop Supermarket on MLK. Phone: (561) 993-9199'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union (900 S Main St)',
+        address: '900 S Main St, Belle Glade, FL 33430',
+        lat: 26.6747, lng: -80.6671,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 996-7886; southern Main St corridor'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union @ Cap Haitien Supermarket',
+        address: '256 SW Ave B, Belle Glade, FL 33430',
+        lat: 26.6848, lng: -80.6740,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'WU inside Cap Haitien Supermarket. Phone: (786) 569-3105'
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union (101 N Main St)',
+        address: '101 N Main St, Belle Glade, FL 33430',
+        lat: 26.6867, lng: -80.6671,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 992-0009; north Main St corridor'
+      },
+      {
+        id: 'wu_005',
+        category: 'western_union',
+        name: 'Western Union Money Order Only (301 N Main St)',
+        address: '301 N Main St, Belle Glade, FL 33430',
+        lat: 26.6948, lng: -80.6671,
+        rating: null, reviews: null,
+        hours: 'Opens 6 AM',
+        notes: 'Money Order Only — not wire transfer capable. Phone: (561) 996-0053',
+        bigbox: true
+      },
+      {
+        id: 'wu_006',
+        category: 'western_union',
+        name: 'Western Union (439 SE 2nd St)',
+        address: '439 SE 2nd St, Belle Glade, FL 33430',
+        lat: 26.6826, lng: -80.6649,
+        rating: null, reviews: null,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (561) 996-8470; shared address with MoneyGram'
+      },
+      {
+        id: 'wu_007',
+        category: 'western_union',
+        name: 'Western Union Money Order Only (1540 NW Ave L)',
+        address: '1540 NW Ave L, Belle Glade, FL 33430',
+        lat: 26.6942, lng: -80.6826,
+        rating: null, reviews: null,
+        hours: 'Opens 6 AM',
+        notes: 'Money Order Only — not wire transfer capable. Phone: (561) 996-0098',
+        bigbox: true
+      },
+      {
+        id: 'wu_008',
+        category: 'western_union',
+        name: 'Western Union (524 Dr MLK Jr Blvd)',
+        address: '524 Dr Martin Luther King Jr Blvd, Belle Glade, FL 33430',
+        lat: 26.6826, lng: -80.6593,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 983-8077; eastern MLK corridor'
+      },
+
+      // ── MONEYGRAM ──────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram (101 S Main St)',
+        address: '101 S Main St, Belle Glade, FL 33430',
+        lat: 26.6817, lng: -80.6671,
+        rating: 4.0, reviews: 1,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (800) 746-7287; 24-hour location on Main St'
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram (524 Doctor MLK Jr Blvd)',
+        address: '524 Doctor M.L.K. Jr Blvd, Belle Glade, FL 33430',
+        lat: 26.6826, lng: -80.6593,
+        rating: null, reviews: null,
+        hours: 'Unknown',
+        notes: 'Phone: (561) 708-8488; co-located with WU at same address'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram (1425 S Main St)',
+        address: '1425 S Main St, Belle Glade, FL 33430',
+        lat: 26.6701, lng: -80.6671,
+        rating: 5.0, reviews: 1,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (561) 996-6349; southern Main St'
+      },
+      {
+        id: 'mg_004',
+        category: 'moneygram',
+        name: "MoneyGram @ Gilbert's Jewelers & Gifts",
+        address: '200 SW 1st St, Belle Glade, FL 33430',
+        lat: 26.6847, lng: -80.6691,
+        rating: null, reviews: null,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (561) 996-3000; inside Gilbert\'s Jewelers'
+      },
+      {
+        id: 'mg_005',
+        category: 'moneygram',
+        name: 'MoneyGram (439 SE 2nd St)',
+        address: '439 SE 2nd St, Belle Glade, FL 33430',
+        lat: 26.6826, lng: -80.6649,
+        rating: null, reviews: null,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 996-8470; shared address with WU'
+      },
+
+      // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────
+      {
+        id: 'ria_001',
+        category: 'ria',
+        name: 'Ria Money Transfer @ Rodolphe Superior Services',
+        address: '125 SW 3rd St, Belle Glade, FL 33430',
+        lat: 26.6852, lng: -80.6708,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 293-6895; only active Ria agent in ZIP'
+      },
+
+      // ── FINANCIAL SERVICES ─────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: "Gilbert's Jewelers & Gifts",
+        address: '200 SW 1st St, Belle Glade, FL 33430',
+        lat: 26.6847, lng: -80.6691,
+        rating: null, reviews: null,
+        hours: 'Opens 9 AM',
+        notes: 'MoneyGram host + jewelry/gifts. Phone: (561) 996-3000'
+      },
+      {
+        id: 'fin_002',
+        category: 'financial_services',
+        name: 'Check Cashing / Money Services (439 SE 2nd St)',
+        address: '439 SE 2nd St, Belle Glade, FL 33430',
+        lat: 26.6826, lng: -80.6649,
+        rating: null, reviews: null,
+        hours: 'Opens 6 AM',
+        notes: 'Hosts both WU and MoneyGram; check cashing services. Phone: (561) 996-8470'
+      },
+
+      // ── ETHNIC GROCERY ─────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: 'One Stop Supermarket',
+        address: '201 Dr M.L.K. Jr Blvd W, Belle Glade, FL 33430',
+        lat: 26.6826, lng: -80.6701,
+        rating: 3.7, reviews: 57,
+        hours: 'Open 24 hours',
+        notes: 'Caribbean/Latin grocery open 24h; also hosts WU. Phone: (561) 993-9199'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: 'La Frontera',
+        address: '1600 W Canal St N, Belle Glade, FL 33430',
+        lat: 26.6937, lng: -80.6844,
+        rating: 4.5, reviews: 94,
+        hours: 'Opens 8 AM',
+        notes: 'Highly rated Latin grocery. Phone: (561) 996-0106'
+      },
+      {
+        id: 'eg_003',
+        category: 'ethnic_grocery',
+        name: 'Cap Haitien Supermarket',
+        address: '216 SW 6th St, Belle Glade, FL 33430',
+        lat: 26.6848, lng: -80.6740,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Haitian grocery; hosts WU agent. Phone: (786) 569-3105'
+      },
+      {
+        id: 'eg_004',
+        category: 'ethnic_grocery',
+        name: 'Lil Haiti Grocery',
+        address: '225 SW 5th St, Belle Glade, FL 33430',
+        lat: 26.6848, lng: -80.6727,
+        rating: null, reviews: null,
+        hours: 'Unknown',
+        notes: 'Haitian grocery; SW quadrant near Cap Haitien'
+      },
+      {
+        id: 'eg_005',
+        category: 'ethnic_grocery',
+        name: 'Mexico Lindo Supermarket',
+        address: '949 S Main St, Belle Glade, FL 33430',
+        lat: 26.6742, lng: -80.6700,
+        rating: 4.5, reviews: 17,
+        hours: 'Open',
+        notes: 'Mexican grocery; southern Main St. Phone: (561) 983-8941'
+      },
+
+      // ── DOLLAR STORES ──────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Family Dollar (101 NW Ave L)',
+        address: '101 NW Ave L, Belle Glade, FL 33430',
+        lat: 26.6840, lng: -80.6826,
+        rating: 4.0, reviews: 111,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 462-1255; northwest corridor'
+      },
+      {
+        id: 'ds_002',
+        category: 'dollar_store',
+        name: 'Family Dollar (Glades Plaza)',
+        address: '533 SW 16th St, Belle Glade, FL 33430',
+        lat: 26.6815, lng: -80.6832,
+        rating: 3.6, reviews: 80,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 264-2170; Glades Plaza shopping center'
+      },
+      {
+        id: 'ds_003',
+        category: 'dollar_store',
+        name: 'Dollar General (S Main St)',
+        address: '1024 S Main St, Belle Glade, FL 33430',
+        lat: 26.6727, lng: -80.6711,
+        rating: 4.2, reviews: 318,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 448-1851; best-rated dollar store in ZIP'
+      },
+      {
+        id: 'ds_004',
+        category: 'dollar_store',
+        name: 'Dollar General (600 SW 16th St)',
+        address: '600 SW 16th St, Belle Glade, FL 33430',
+        lat: 26.6809, lng: -80.6832,
+        rating: 3.1, reviews: 13,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 760-1117; Glades Plaza area'
+      },
+
+      // ── LAUNDROMATS ────────────────────────────────────────────────────────
+      {
+        id: 'lm_001',
+        category: 'laundromat',
+        name: 'My City Laundry',
+        address: '156 S Main St, Belle Glade, FL 33430',
+        lat: 26.6812, lng: -80.6671,
+        rating: 5.0, reviews: 671,
+        hours: 'Opens 7 AM',
+        notes: '5-star, 671 reviews — most-rated business in ZIP. Phone: (561) 247-2786'
+      },
+      {
+        id: 'lm_002',
+        category: 'laundromat',
+        name: 'Glades Laundromat',
+        address: '624 NW 16th St, Belle Glade, FL 33430',
+        lat: 26.6881, lng: -80.6832,
+        rating: 4.2, reviews: 34,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 983-8091; northwest area'
+      },
+      {
+        id: 'lm_003',
+        category: 'laundromat',
+        name: "Two Brother's Laundrymat",
+        address: '1132 NW Ave L, Belle Glade, FL 33430',
+        lat: 26.6940, lng: -80.6826,
+        rating: 4.6, reviews: 20,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (561) 992-6250; far northwest'
+      },
+      {
+        id: 'lm_004',
+        category: 'laundromat',
+        name: "Larry's Suds & Duds",
+        address: '216 SW 6th St, Belle Glade, FL 33430',
+        lat: 26.6848, lng: -80.6743,
+        rating: 5.0, reviews: 2,
+        hours: 'Unknown',
+        notes: 'Phone: (561) 992-9687; co-located with Cap Haitien Supermarket'
       }
 
     ]
@@ -1442,9 +1824,9 @@ function renderScorecard() {
   const reduce  = zones.filter(z => z.type === 'zones_reduce');
 
   const allStores = getZip().stores;
-  const wuCount  = allStores.filter(s => s.category === 'western_union').length;
-  const mgCount  = allStores.filter(s => s.category === 'moneygram').length;
-  const riaCount = allStores.filter(s => s.category === 'ria').length;
+  const wuCount  = allStores.filter(s => s.category === 'western_union' && !s.bigbox).length;
+  const mgCount  = allStores.filter(s => s.category === 'moneygram'     && !s.bigbox).length;
+  const riaCount = allStores.filter(s => s.category === 'ria'           && !s.bigbox).length;
 
   const zoneRow = (zone, idx) => `
     <div class="scorecard-row">
@@ -1459,7 +1841,7 @@ function renderScorecard() {
     ${reduce.length ? `<div class="scorecard-section reduce"><div class="scorecard-title">▼ REDUCE (${reduce.length})</div>${reduce.map(zoneRow).join('')}</div>` : ''}
     ${!expand.length && !monitor.length && !reduce.length ? '<div class="scorecard-empty">No zones detected with current thresholds.</div>' : ''}
     <div class="scorecard-counts">
-      <div class="scorecard-label" style="margin-top:10px;margin-bottom:6px">PROVIDER COUNT</div>
+      <div class="scorecard-label" style="margin-top:10px;margin-bottom:6px">STORE COUNT (OWNED/INDEPENDENT)</div>
       <div class="count-row"><span style="color:#F5C518">●</span> Western Union <strong>${wuCount}</strong></div>
       <div class="count-row"><span style="color:#004B87">●</span> MoneyGram <strong>${mgCount}</strong></div>
       <div class="count-row"><span style="color:#E31837">●</span> Ria <strong>${riaCount}</strong></div>
@@ -1475,9 +1857,9 @@ function renderNarrative() {
   const reduce  = zones.filter(z => z.type === 'zones_reduce');
 
   const allStores2   = getZip().stores;
-  const wuCount  = allStores2.filter(s => s.category === 'western_union').length;
-  const mgCount  = allStores2.filter(s => s.category === 'moneygram').length;
-  const riaCount = allStores2.filter(s => s.category === 'ria').length;
+  const wuCount  = allStores2.filter(s => s.category === 'western_union' && !s.bigbox).length;
+  const mgCount  = allStores2.filter(s => s.category === 'moneygram'     && !s.bigbox).length;
+  const riaCount = allStores2.filter(s => s.category === 'ria'           && !s.bigbox).length;
   const totalSignals = allStores2.filter(s => DEMAND_WEIGHTS[s.category] !== undefined).length;
 
   const expandRows = expand.map((z, i) => `
