@@ -162,6 +162,19 @@ const WU_CANNIBALIZATION_RADIUS_MI = 0.3;
 const HIGH_DEMAND_THRESHOLD = 5;
 const LOW_DEMAND_THRESHOLD  = 3;
 
+// ─── CATEGORY CONFIG ──────────────────────────────────────────────────────────
+const CATEGORIES = {
+  western_union:      { label: 'Western Union',  color: '#F5C518', role: 'primary',       r: 14 },
+  moneygram:          { label: 'MoneyGram',       color: '#E31837', role: 'primary',       r: 14 },
+  ria:                { label: 'Ria',             color: '#F97316', role: 'primary',       r: 14 },
+  financial_services: { label: 'Financial Svcs', color: '#1D9E75', role: 'demand_signal', r: 8  },
+  ethnic_grocery:     { label: 'Ethnic Grocery', color: '#9B59B6', role: 'demand_signal', r: 8  },
+  dollar_store:       { label: 'Dollar Store',   color: '#E91E8C', role: 'demand_signal', r: 8  },
+  laundromat:         { label: 'Laundromat',     color: '#00BCD4', role: 'demand_signal', r: 8  }
+};
+const DEMAND_WEIGHTS = { ethnic_grocery: 3, financial_services: 2, dollar_store: 1, laundromat: 1 };
+const COMPETITOR_BONUS = 2;
+
 // ─── PER-ZIP CONFIGURATION ────────────────────────────────────────────────────
 const ZIP_CONFIG = {
   '33147': {
