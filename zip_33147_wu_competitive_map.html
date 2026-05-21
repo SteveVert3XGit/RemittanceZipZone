@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WU Competitive Intel — ZIP 33147</title>
+  <title>Western Union Location Selector — ZIP 33147</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
@@ -16,7 +16,9 @@
     #zip-label { color: #666; font-weight: 400; font-size: 13px; margin-left: 8px; }
     #pdf-btn { background: #2a2a2a; color: #ccc; border: 1px solid #444; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
     #pdf-btn:hover { background: #333; }
-    #toggle-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+    #toggle-bar { display: flex; flex-direction: column; gap: 6px; }
+    .toggle-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .toggle-row-label { font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; min-width: 110px; }
     #main-content { display: grid; grid-template-columns: 1fr 280px; gap: 10px; }
     #map-wrap { background: #111927; border-radius: 10px; overflow: hidden; }
     #map-svg { width: 100%; height: auto; display: block; }
@@ -85,7 +87,7 @@
   <header id="top-bar">
     <div id="title-block">
       <span id="logo">⬡</span>
-      <span id="title-text">WU Competitive Intel <span id="zip-label">ZIP 33147 — NW Miami</span></span>
+      <span id="title-text">Western Union Location Selector <span id="zip-label">ZIP 33147 — NW Miami</span></span>
     </div>
     <button id="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
   </header>
@@ -220,11 +222,11 @@ function exportPDF() {
 }
 
 // ─── TUNABLE CONSTANTS ────────────────────────────────────────────────────────
-const CLUSTER_RADIUS_MI          = 0.3;
+const CLUSTER_RADIUS_MI          = 0.35;
 const COMPETITOR_RADIUS_MI       = 0.5;
 const WU_RADIUS_MI               = 0.5;
 const WU_CANNIBALIZATION_RADIUS_MI = 0.3;
-const HIGH_DEMAND_THRESHOLD = 6;
+const HIGH_DEMAND_THRESHOLD = 5;
 const LOW_DEMAND_THRESHOLD  = 3;
 
 // ─── MAP BOUNDS ───────────────────────────────────────────────────────────────
@@ -275,7 +277,8 @@ const stores = [
     rating: 3.8,
     reviews: 94,
     hours: 'Mon–Sun 6am–11pm',
-    notes: 'Inside Walmart #4303 MoneyCenter; also offers MoneyGram. Phone: 305-913-8439'
+    notes: 'Inside Walmart #4303 MoneyCenter; also offers MoneyGram. Phone: 305-913-8439',
+    bigbox: true
   },
   {
     id: 'wu_002',
@@ -287,7 +290,8 @@ const stores = [
     rating: 3.5,
     reviews: 38,
     hours: 'Mon–Fri 9am–9pm, Sat 9am–6pm, Sun 10am–6pm',
-    notes: 'Inside Walgreens #3371; Walgreens is exclusive WU partner. Phone: 305-691-0881'
+    notes: 'Inside Walgreens #3371; Walgreens is exclusive WU partner. Phone: 305-691-0881',
+    bigbox: true
   },
   {
     id: 'wu_003',
@@ -349,7 +353,8 @@ const stores = [
     rating: 3.8,
     reviews: 94,
     hours: 'Mon–Sun 6am–11pm',
-    notes: 'Inside Walmart #4303 MoneyCenter; co-located with Western Union. Phone: 305-913-8439'
+    notes: 'Inside Walmart #4303 MoneyCenter; co-located with Western Union. Phone: 305-913-8439',
+    bigbox: true
   },
   {
     id: 'mg_002',
@@ -509,7 +514,8 @@ const stores = [
     rating: 4.0,
     reviews: 94,
     hours: 'Mon–Sun 6am–11pm',
-    notes: 'Inside Walmart #4303; check cashing, money transfer, bill pay, tax prep. Phone: 305-913-8439'
+    notes: 'Inside Walmart #4303; check cashing, money transfer, bill pay, tax prep. Phone: 305-913-8439',
+    bigbox: true
   },
   {
     id: 'fin_005',
@@ -788,6 +794,7 @@ function renderPins() {
     g.addEventListener('mouseenter', () => g.style.filter = 'brightness(1.25)');
     g.addEventListener('mouseleave', () => g.style.filter = '');
     g.addEventListener('click', () => showPin(s));
+    if (s.bigbox) g.style.opacity = '0.35';
     layer.appendChild(g);
     if (!activeToggles.has(s.category)) g.style.display = 'none';
   });
@@ -799,23 +806,53 @@ activeToggles.add('zones_expand');
 activeToggles.add('zones_monitor');
 activeToggles.add('zones_reduce');
 
+function makeRow(label) {
+  const row = document.createElement('div');
+  row.className = 'toggle-row';
+  const lbl = document.createElement('span');
+  lbl.className = 'toggle-row-label';
+  lbl.textContent = label;
+  row.appendChild(lbl);
+  return row;
+}
+
 function renderToggles() {
   const bar = document.getElementById('toggle-bar');
   bar.innerHTML = '';
-  Object.entries(CATEGORIES).forEach(([cat, cfg]) => {
+
+  const row1 = makeRow('Remittance Players');
+  ['western_union', 'moneygram', 'ria'].forEach(cat => {
+    const cfg = CATEGORIES[cat];
     const btn = document.createElement('button');
     btn.className = 'toggle-btn';
     btn.dataset.cat = cat;
     btn.textContent = '● ' + cfg.label;
     btn.style.background = cfg.color;
-    btn.style.color = cfg.role === 'primary' ? '#000' : '#fff';
+    btn.style.color = '#000';
     btn.addEventListener('click', () => toggleCategory(cat, btn));
-    bar.appendChild(btn);
+    row1.appendChild(btn);
   });
+  bar.appendChild(row1);
+
+  const row2 = makeRow('Relevant Businesses');
+  ['financial_services', 'ethnic_grocery', 'dollar_store', 'laundromat'].forEach(cat => {
+    const cfg = CATEGORIES[cat];
+    const btn = document.createElement('button');
+    btn.className = 'toggle-btn';
+    btn.dataset.cat = cat;
+    btn.textContent = '● ' + cfg.label;
+    btn.style.background = cfg.color;
+    btn.style.color = '#fff';
+    btn.addEventListener('click', () => toggleCategory(cat, btn));
+    row2.appendChild(btn);
+  });
+  bar.appendChild(row2);
+
+  const row3 = makeRow('Zones');
   [
-    { key: 'zones_expand', label: '◎ Expansion Zones', border: '#3fb950', color: '#3fb950' },
-    { key: 'zones_monitor', label: '◎ Monitor Zones', border: '#f0c040', color: '#f0c040' },
-    { key: 'zones_reduce', label: '◎ Saturation Zones', border: '#f85149', color: '#f85149' }
+    { key: 'zones_expand',  label: '◎ Expansion Zones',  border: '#3fb950', color: '#3fb950' },
+    { key: 'zones_monitor', label: '◎ Monitor Zones',    border: '#f0c040', color: '#f0c040' },
+    { key: 'zones_reduce',  label: '◎ Saturation Zones', border: '#f85149', color: '#f85149' }
   ].forEach(({ key, label, border, color }) => {
     const btn = document.createElement('button');
     btn.className = 'toggle-btn zone-toggle';
@@ -824,8 +861,9 @@ function renderToggles() {
     btn.style.border = `1px solid ${border}`;
     btn.style.color = color;
     btn.addEventListener('click', () => toggleZones(key, btn));
-    bar.appendChild(btn);
+    row3.appendChild(btn);
   });
+  bar.appendChild(row3);
 }
 
 function toggleCategory(cat, btn) {
@@ -873,6 +911,21 @@ function showPin(store) {
 }
 
 // ─── SPATIAL HELPERS ──────────────────────────────────────────────────────────
+function nearestCorridor(lat, lng) {
+  const ns = [
+    { name: 'NW 27th Ave', lng: -80.249 },
+    { name: 'NW 17th Ave', lng: -80.234 },
+    { name: 'NW 7th Ave',  lng: -80.222 }
+  ].reduce((a, b) => Math.abs(lng - a.lng) < Math.abs(lng - b.lng) ? a : b);
+  const ew = [
+    { name: 'NW 79th St', lat: 25.851 },
+    { name: 'NW 62nd St', lat: 25.837 },
+    { name: 'NW 54th St', lat: 25.831 },
+    { name: 'NW 36th St', lat: 25.813 }
+  ].reduce((a, b) => Math.abs(lat - a.lat) < Math.abs(lat - b.lat) ? a : b);
+  return `${ns.name} @ ${ew.name}`;
+}
+
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 3958.8;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -887,9 +940,9 @@ function haversine(lat1, lng1, lat2, lng2) {
 let _zonesCache = null;
 function computeZones() {
   if (_zonesCache) return _zonesCache;
-  const demandStores = stores.filter(s => DEMAND_WEIGHTS[s.category] !== undefined);
-  const competitors  = stores.filter(s => s.category === 'moneygram' || s.category === 'ria');
-  const wuStores     = stores.filter(s => s.category === 'western_union');
+  const demandStores = stores.filter(s => DEMAND_WEIGHTS[s.category] !== undefined && !s.bigbox);
+  const competitors  = stores.filter(s => (s.category === 'moneygram' || s.category === 'ria') && !s.bigbox);
+  const wuStores     = stores.filter(s => s.category === 'western_union' && !s.bigbox);
 
   const visited = new Set();
   const clusters = [];
@@ -917,7 +970,7 @@ function computeZones() {
     else if (adjDemand >= HIGH_DEMAND_THRESHOLD && wuCount >= 2) type = 'zones_monitor';
     else if (adjDemand < LOW_DEMAND_THRESHOLD  && wuCount >= 2) type = 'zones_reduce';
 
-    clusters.push({ centroid, members, adjDemand, wuCount, type, compBonus });
+    clusters.push({ centroid, members, adjDemand, wuCount, type, compBonus, label: nearestCorridor(centroid.lat, centroid.lng) });
   });
 
   // Second pass: seed from WU positions to catch self-cannibalization clusters
@@ -944,7 +997,7 @@ function computeZones() {
     const adjDemand = baseScore + compBonus;
     // 3+ WU in tight radius = cannibalization regardless of demand; 2 WU + low demand also flagged
     if (wuCluster.length >= 3 || adjDemand < LOW_DEMAND_THRESHOLD) {
-      clusters.push({ centroid, members: wuCluster, adjDemand, wuCount: wuCluster.length, type: 'zones_reduce', compBonus, source: 'wu_seeded' });
+      clusters.push({ centroid, members: wuCluster, adjDemand, wuCount: wuCluster.length, type: 'zones_reduce', compBonus, source: 'wu_seeded', label: nearestCorridor(centroid.lat, centroid.lng) });
     }
   });
 
@@ -1010,7 +1063,7 @@ function renderZones() {
     text.setAttribute('font-family', 'monospace');
     text.setAttribute('class', 'zone-ellipse');
     text.setAttribute('data-type', zone.type);
-    text.textContent = cfg.label;
+    text.textContent = zone.label;
     if (!activeToggles.has(zone.type)) text.style.display = 'none';
     layer.appendChild(text);
   });
@@ -1029,7 +1082,7 @@ function renderScorecard() {
 
   const zoneRow = (zone, idx) => `
     <div class="scorecard-row">
-      <strong>${idx + 1}.</strong> ${zone.centroid.lat.toFixed(4)}, ${zone.centroid.lng.toFixed(4)}
+      <strong>${idx + 1}.</strong> ${zone.label}
       <div class="scorecard-sub">Demand: ${zone.adjDemand} · WU nearby: ${zone.wuCount} · ${zone.members.length} signals</div>
     </div>`;
 
@@ -1064,7 +1117,7 @@ function renderNarrative() {
     <div class="narrative-item">
       <div class="narrative-rank">${i + 1}</div>
       <div>
-        <div class="narrative-item-title">Cluster at (${z.centroid.lat.toFixed(3)}, ${z.centroid.lng.toFixed(3)})</div>
+        <div class="narrative-item-title">${z.label}</div>
         <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} · ${z.members.length} demand signals · ${z.compBonus > 0 ? `+${z.compBonus} competitor validation` : 'No competitor nearby'} · 0 WU within ${WU_RADIUS_MI}mi</div>
       </div>
     </div>`).join('') || '<div class="narrative-empty">No expansion zones identified with current thresholds.</div>';
@@ -1073,7 +1126,7 @@ function renderNarrative() {
     <div class="narrative-item">
       <div class="narrative-rank">${i + 1}</div>
       <div>
-        <div class="narrative-item-title">Cluster at (${z.centroid.lat.toFixed(3)}, ${z.centroid.lng.toFixed(3)})</div>
+        <div class="narrative-item-title">${z.label}</div>
         <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} (below threshold of ${LOW_DEMAND_THRESHOLD}) · ${z.wuCount} WU within ${WU_RADIUS_MI}mi · Low market justification for WU density</div>
       </div>
     </div>`).join('') || '<div class="narrative-empty">No saturation concerns with current thresholds.</div>';
@@ -1082,7 +1135,7 @@ function renderNarrative() {
     <div class="narrative-item">
       <div class="narrative-rank">${i + 1}</div>
       <div>
-        <div class="narrative-item-title">Cluster at (${z.centroid.lat.toFixed(3)}, ${z.centroid.lng.toFixed(3)})</div>
+        <div class="narrative-item-title">${z.label}</div>
         <div class="narrative-item-desc">Adjusted demand: ${z.adjDemand} · ${z.members.length} demand signals · ${z.compBonus > 0 ? `+${z.compBonus} competitor validation` : 'No competitor nearby'} · ${z.wuCount} WU within ${WU_RADIUS_MI}mi</div>
       </div>
     </div>`).join('') || '<div class="narrative-empty">No monitor zones identified.</div>';

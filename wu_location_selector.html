@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Western Union Location Selector</title>
+  <title>Western Union Location Review by Zip Code</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
@@ -89,13 +89,19 @@
   <header id="top-bar">
     <div id="title-block">
       <span id="logo">⬡</span>
-      <span id="title-text">Western Union Location Selector</span>
+      <span id="title-text">Western Union Location Review by Zip Code</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <select id="zip-select" onchange="selectZip(this.value)">
         <option value="33147">ZIP 33147 — Liberty City / NW Miami</option>
         <option value="33463">ZIP 33463 — Lake Worth / Greenacres</option>
         <option value="33430">ZIP 33430 — Belle Glade</option>
+        <option value="33460">ZIP 33460 — Lake Worth Beach</option>
+        <option value="33023">ZIP 33023 — Hollywood / Pembroke Park</option>
+        <option value="33142">ZIP 33142 — Allapattah / Miami</option>
+        <option value="33144">ZIP 33144 — Westchester / Miami</option>
+        <option value="33180">ZIP 33180 — Aventura / NE Miami-Dade</option>
+        <option value="33139">ZIP 33139 — South Beach / Miami Beach</option>
       </select>
       <button id="pdf-btn" onclick="exportPDF()">⬇ Export PDF</button>
     </div>
@@ -145,10 +151,10 @@ function exportPDF() {
   btn.disabled = true;
   const opt = {
     margin:      [8, 8],
-    filename:    'wu_competitive_intel_33147.pdf',
+    filename:    'wu_competitive_intel_' + activeZip + '.pdf',
     image:       { type: 'jpeg', quality: 0.95 },
     html2canvas: { scale: 2, useCORS: true },
-    jsPDF:       { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   html2pdf().set(opt).from(document.getElementById('app')).save()
     .then(() => { btn.textContent = '⬇ Export PDF'; btn.disabled = false; })
@@ -1483,6 +1489,1727 @@ const ZIP_CONFIG = {
       }
 
     ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  '33460': {
+    label: 'ZIP 33460 — Lake Worth Beach',
+    map: {
+      latMin: 26.600, latMax: 26.640, latRange: 0.040,
+      lngMin: -80.083, lngMax: -80.048, lngRange: 0.035,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'Dixie Hwy',    lng: -80.063 },
+        { name: 'Federal Hwy',  lng: -80.059 }
+      ],
+      ew: [
+        { name: 'Lake Ave',     lat: 26.614 },
+        { name: '10th Ave N',   lat: 26.613 }
+      ]
+    },
+    streets: [
+      { type: 'ns', x: 400, weight: 3, label: 'Dixie Hwy'   },
+      { type: 'ns', x: 480, weight: 2, label: 'Federal Hwy' },
+      { type: 'ew', y: 338, weight: 3, label: 'Lake Ave',    labelX: 30, labelY: 334 }
+    ],
+    demographics: {
+      areaName: 'Lake Worth Beach — Palm Beach County',
+      population: '~37,000',
+      foreignBorn: { pct: '~45%', count: '~16,650 residents' },
+      unbanked:    { pct: '~25%', note: 'well above 5.9% national avg; cash-dependent economy' },
+      poverty:     { pct: '~28%', medianHHI: '$38,000' },
+      diaspora: [
+        { name: 'Guatemalan / Central American', pct: '~22%' },
+        { name: 'Mexican',                       pct: '~18%' },
+        { name: 'Haitian / Caribbean',           pct: '~15%' },
+        { name: 'Jamaican / Other Caribbean',    pct: '~10%' },
+        { name: 'Puerto Rican',                  pct: '~8%'  }
+      ],
+      context: 'Lake Worth Beach (ZIP 33460) is a dense, working-class coastal corridor with one of Palm Beach County\'s highest concentrations of foreign-born residents. The N/S Dixie Hwy spine and Lake Ave crossroads anchor nearly all retail financial services. Guatemalan and Mexican sending patterns dominate, with significant Haitian and Caribbean demand. High unbanked rate (est. 25%) drives heavy reliance on in-person wire transfer.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ──────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union (531 S Dixie Hwy)',
+        address: '531 S Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.608, lng: -80.063,
+        rating: 5.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 547-9233'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union (1600 S Dixie Hwy)',
+        address: '1600 S Dixie Hwy Ste E, Lake Worth Beach, FL 33460',
+        lat: 26.605, lng: -80.063,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 10 AM',
+        notes: 'Phone: (561) 370-9717'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union (1117 Lake Ave)',
+        address: '1117 Lake Ave, Lake Worth Beach, FL 33460',
+        lat: 26.614, lng: -80.072,
+        rating: null, reviews: null,
+        hours: 'Opens 10 AM',
+        notes: 'Phone: (561) 582-4015; co-located with MoneyGram'
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union (1337 N Dixie Hwy)',
+        address: '1337 N Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.619, lng: -80.063,
+        rating: null, reviews: null,
+        hours: 'Opens 7:30 AM',
+        notes: 'Phone: (561) 588-0220'
+      },
+      {
+        id: 'wu_005',
+        category: 'western_union',
+        name: 'Western Union (1001 N Dixie Hwy)',
+        address: '1001 N Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.616, lng: -80.063,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 582-0070'
+      },
+      {
+        id: 'wu_006',
+        category: 'western_union',
+        name: 'Western Union @ Key Food (1206 S Dixie Hwy)',
+        address: '1206 S Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.607, lng: -80.063,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 547-6330; inside Key Food Fresh Supermarket'
+      },
+      {
+        id: 'wu_007',
+        category: 'western_union',
+        name: 'Western Union Money Order Only (1900 10th Ave N)',
+        address: '1900 10th Ave N, Lake Worth Beach, FL 33460',
+        lat: 26.613, lng: -80.076,
+        rating: null, reviews: null,
+        hours: 'Open 24 hours',
+        notes: 'Money Order Only — not wire transfer capable. Phone: (561) 917-2764',
+        bigbox: true
+      },
+      {
+        id: 'wu_008',
+        category: 'western_union',
+        name: 'Western Union @ Dollar General (2 N Lakeside Dr)',
+        address: '2 N Lakeside Dr, Lake Worth Beach, FL 33460',
+        lat: 26.615, lng: -80.060,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 377-0065; big-box retail location',
+        bigbox: true
+      },
+
+      // ── MONEYGRAM ──────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram (121 N Federal Hwy)',
+        address: '121 N Federal Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.615, lng: -80.059,
+        rating: null, reviews: null,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (561) 329-9926'
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram (406 N Dixie Hwy)',
+        address: '406 N Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.617, lng: -80.063,
+        rating: 4.3, reviews: 6,
+        hours: 'Opens 9:30 AM',
+        notes: 'Phone: (561) 582-8870'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram (516 S Dixie Hwy)',
+        address: '516 S Dixie Hwy #6, Lake Worth Beach, FL 33460',
+        lat: 26.609, lng: -80.063,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (561) 582-7643'
+      },
+      {
+        id: 'mg_004',
+        category: 'moneygram',
+        name: 'MoneyGram (1117 Lake Ave)',
+        address: '1117 Lake Ave, Lake Worth Beach, FL 33460',
+        lat: 26.614, lng: -80.073,
+        rating: null, reviews: null,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (561) 582-4015; co-located with WU'
+      },
+      {
+        id: 'mg_005',
+        category: 'moneygram',
+        name: 'MoneyGram (11 N J St)',
+        address: '11 N J St, Lake Worth Beach, FL 33460',
+        lat: 26.614, lng: -80.061,
+        rating: null, reviews: null,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (561) 667-2618'
+      },
+
+      // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────
+      {
+        id: 'ria_001',
+        category: 'ria',
+        name: 'Ria Money Transfer (4055 FL-7)',
+        address: '4055 FL-7, Lake Worth, FL 33460',
+        lat: 26.621, lng: -80.079,
+        rating: 4.0, reviews: 1,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (855) 355-2144; near 33460 western boundary'
+      },
+
+      // ── FINANCIAL SERVICES ─────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: 'Lake Worth Check Cashing',
+        address: '400 S Dixie Hwy #4, Lake Worth Beach, FL 33460',
+        lat: 26.612, lng: -80.063,
+        rating: 4.8, reviews: 13,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (561) 331-8237; standalone check cash on Dixie'
+      },
+      {
+        id: 'fin_002',
+        category: 'financial_services',
+        name: 'Metro Check Cashing',
+        address: '1030 Lake Ave #C, Lake Worth Beach, FL 33460',
+        lat: 26.614, lng: -80.071,
+        rating: 5.0, reviews: 9,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (561) 586-4065; on Lake Ave corridor'
+      },
+
+      // ── ETHNIC GROCERY ─────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: "Tony's Latin Grocery",
+        address: '311 N Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.617, lng: -80.063,
+        rating: 4.4, reviews: 17,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 586-0700; Latin grocery on N Dixie Hwy'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: 'Casa Vieja Inc',
+        address: '1209 Lake Ave, Lake Worth Beach, FL 33460',
+        lat: 26.614, lng: -80.073,
+        rating: 4.2, reviews: 221,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (561) 429-5920; well-reviewed Latin grocery on Lake Ave'
+      },
+      {
+        id: 'eg_003',
+        category: 'ethnic_grocery',
+        name: 'Key Food Fresh Supermarket',
+        address: '1206 S Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.607, lng: -80.063,
+        rating: 4.1, reviews: 801,
+        hours: 'Opens 7:30 AM',
+        notes: 'Phone: (561) 547-6330; large Hispanic supermarket; hosts WU'
+      },
+      {
+        id: 'eg_004',
+        category: 'ethnic_grocery',
+        name: 'Los Primos Groceries',
+        address: '400 US-1, Lake Worth Beach, FL 33460',
+        lat: 26.616, lng: -80.059,
+        rating: 4.1, reviews: 33,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (561) 578-4224; neighborhood grocery on Federal Hwy'
+      },
+
+      // ── DOLLAR STORES ──────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Dollar Tree (224 N 3rd St)',
+        address: '224 N 3rd St, Lake Worth Beach, FL 33460',
+        lat: 26.615, lng: -80.061,
+        rating: 4.3, reviews: 191,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (561) 494-6525; downtown core'
+      },
+      {
+        id: 'ds_002',
+        category: 'dollar_store',
+        name: 'Family Dollar (1206 S Dixie Hwy)',
+        address: '1206 S Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.606, lng: -80.063,
+        rating: 3.2, reviews: 74,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 290-2629'
+      },
+
+      // ── LAUNDROMATS ────────────────────────────────────────────────────────
+      {
+        id: 'lm_001',
+        category: 'laundromat',
+        name: 'The Laundry Room',
+        address: '1714 N Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.626, lng: -80.063,
+        rating: 4.7, reviews: 219,
+        hours: 'Opens 7:30 AM',
+        notes: 'Phone: (561) 586-6999; top-rated laundromat in ZIP'
+      },
+      {
+        id: 'lm_002',
+        category: 'laundromat',
+        name: 'Lavanderia Coin Laundry',
+        address: '402 N Dixie Hwy, Lake Worth Beach, FL 33460',
+        lat: 26.617, lng: -80.0635,
+        rating: 4.4, reviews: 131,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (561) 508-2750; central Dixie Hwy corridor'
+      }
+
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  '33023': {
+    label: 'ZIP 33023 — Hollywood / Pembroke Park',
+    map: {
+      latMin: 25.978, latMax: 26.022, latRange: 0.044,
+      lngMin: -80.228, lngMax: -80.168, lngRange: 0.060,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'State Rd 7',      lng: -80.211 },
+        { name: 'University Dr',   lng: -80.194 }
+      ],
+      ew: [
+        { name: 'Hollywood Blvd',  lat: 26.011 },
+        { name: 'Johnson St',      lat: 26.001 },
+        { name: 'Pembroke Rd',     lat: 25.992 }
+      ]
+    },
+    streets: [
+      { type: 'ns', x: 198, weight: 3, label: 'State Rd 7'    },
+      { type: 'ns', x: 398, weight: 2, label: 'University Dr' },
+      { type: 'ew', y: 130, weight: 3, label: 'Hollywood Blvd',  labelX: 30, labelY: 126 },
+      { type: 'ew', y: 248, weight: 2, label: 'Johnson St',       labelX: 30, labelY: 244 },
+      { type: 'ew', y: 354, weight: 2, label: 'Pembroke Rd',      labelX: 30, labelY: 350 }
+    ],
+    demographics: {
+      areaName: 'Hollywood / Pembroke Park — Broward County',
+      population: '~60,000',
+      foreignBorn: { pct: '~40%', count: '~24,000 residents' },
+      unbanked:    { pct: '~20%', note: 'above 5.9% national avg; Haitian diaspora concentrated here' },
+      poverty:     { pct: '~20%', medianHHI: '$42,000' },
+      diaspora: [
+        { name: 'Haitian / Haitian-American',    pct: '~30%' },
+        { name: 'Colombian / Venezuelan',        pct: '~18%' },
+        { name: 'Jamaican / Other Caribbean',    pct: '~12%' },
+        { name: 'Central American',              pct: '~10%' }
+      ],
+      context: 'ZIP 33023 (Hollywood / Pembroke Park) is a major Haitian diaspora hub in Broward County, with dense remittance activity along the State Rd 7 corridor. The Hollywood Blvd / Johnson St / Pembroke Rd crossings form the commercial spine. Both WU and Ria maintain strong agent networks here, reflecting deep Haitian and Caribbean sending demand.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ──────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union (100 N State Rd 7)',
+        address: '100 N State Rd 7, Hollywood, FL 33023',
+        lat: 25.997, lng: -80.211,
+        rating: 1.0, reviews: 1,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (954) 329-6910'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union (301 S State Rd 7)',
+        address: '301 S State Rd 7, Hollywood, FL 33023',
+        lat: 25.994, lng: -80.211,
+        rating: 1.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (754) 260-6713; also hosts Walmart Ria (bigbox)'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union (3705 Hollywood Blvd)',
+        address: '3705 Hollywood Blvd, Hollywood, FL 33023',
+        lat: 26.011, lng: -80.202,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (954) 962-4787'
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union (3251 Hollywood Blvd)',
+        address: '3251 Hollywood Blvd, Hollywood, FL 33023',
+        lat: 26.011, lng: -80.200,
+        rating: 4.2, reviews: 5,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (954) 964-5005; Hollywood Way location'
+      },
+      {
+        id: 'wu_005',
+        category: 'western_union',
+        name: 'Western Union (314 N University Dr)',
+        address: '314 N University Dr, Hollywood, FL 33023',
+        lat: 26.015, lng: -80.194,
+        rating: 2.0, reviews: 2,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (954) 378-7277'
+      },
+      {
+        id: 'wu_006',
+        category: 'western_union',
+        name: 'Western Union (3451 Sheridan St)',
+        address: '3451 Sheridan St, Hollywood, FL 33023',
+        lat: 26.021, lng: -80.199,
+        rating: 1.0, reviews: 2,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (954) 966-8880'
+      },
+      {
+        id: 'wu_007',
+        category: 'western_union',
+        name: 'Western Union (5999 Pembroke Rd)',
+        address: '5999 Pembroke Rd, Hollywood, FL 33023',
+        lat: 25.992, lng: -80.194,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (954) 964-7274'
+      },
+      {
+        id: 'wu_008',
+        category: 'western_union',
+        name: 'Western Union @ Dollar General (830 S State Rd 7)',
+        address: '830 S State Rd 7, Hollywood, FL 33023',
+        lat: 25.987, lng: -80.211,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (954) 613-1284; big-box retail location',
+        bigbox: true
+      },
+
+      // ── MONEYGRAM ──────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram (240 S State Rd 7)',
+        address: '240 S State Rd 7, Hollywood, FL 33023',
+        lat: 25.993, lng: -80.211,
+        rating: null, reviews: null,
+        hours: 'Unknown',
+        notes: 'Phone: (954) 987-0200; co-located with Money Mart check cashing'
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram (900 S State Rd 7)',
+        address: '900 S State Rd 7, Hollywood, FL 33023',
+        lat: 25.987, lng: -80.211,
+        rating: 1.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (800) 746-7287'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram @ Key Food (6819 Miramar Pkwy)',
+        address: '6819 Miramar Pkwy, Hollywood, FL 33023',
+        lat: 25.981, lng: -80.200,
+        rating: 3.7, reviews: 3,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (954) 322-8707; inside Key Food Supermarket'
+      },
+      {
+        id: 'mg_004',
+        category: 'moneygram',
+        name: 'MoneyGram (3440 Hollywood Blvd)',
+        address: '3440 Hollywood Blvd, Hollywood, FL 33023',
+        lat: 26.011, lng: -80.201,
+        rating: 4.7, reviews: 3,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (800) 746-7287'
+      },
+      {
+        id: 'mg_005',
+        category: 'moneygram',
+        name: 'MoneyGram (6200 Johnson St)',
+        address: '6200 Johnson St, Hollywood, FL 33023',
+        lat: 26.001, lng: -80.193,
+        rating: null, reviews: null,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (954) 251-1968'
+      },
+
+      // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────
+      {
+        id: 'ria_001',
+        category: 'ria',
+        name: 'Ria @ Tierra Querida Envios Corp',
+        address: '4626 Hollywood Blvd, Hollywood, FL 33023',
+        lat: 26.011, lng: -80.205,
+        rating: 4.9, reviews: 30,
+        hours: 'Opens 8:30 AM',
+        notes: 'Phone: (954) 964-6130; highest-rated Ria in ZIP'
+      },
+      {
+        id: 'ria_002',
+        category: 'ria',
+        name: 'Ria @ Stop N Go #5',
+        address: '6100 Washington St, Hollywood, FL 33023',
+        lat: 26.003, lng: -80.193,
+        rating: 5.0, reviews: 2,
+        hours: 'Opens 5 AM',
+        notes: 'Phone: (954) 963-6111'
+      },
+      {
+        id: 'ria_003',
+        category: 'ria',
+        name: 'Ria @ Santo Domingo Mini Market',
+        address: '6421 Pembroke Rd, Hollywood, FL 33023',
+        lat: 25.992, lng: -80.195,
+        rating: 5.0, reviews: 1,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (954) 981-2474; Caribbean-focused market'
+      },
+      {
+        id: 'ria_004',
+        category: 'ria',
+        name: 'Ria @ Giros Rapidez LLC',
+        address: '6108 Johnson St, Hollywood, FL 33023',
+        lat: 26.001, lng: -80.193,
+        rating: null, reviews: null,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (954) 989-3132'
+      },
+
+      // ── FINANCIAL SERVICES ─────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: 'Money Mart (240 S State Rd 7)',
+        address: '240 S State Rd 7, Hollywood, FL 33023',
+        lat: 25.993, lng: -80.211,
+        rating: 4.8, reviews: 368,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (954) 987-0200; highest-traffic financial services in ZIP'
+      },
+      {
+        id: 'fin_002',
+        category: 'financial_services',
+        name: 'Check Cashing USA (5906 Pembroke Rd)',
+        address: '5906 Pembroke Rd, Hollywood, FL 33023',
+        lat: 25.992, lng: -80.192,
+        rating: 4.8, reviews: 252,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (954) 266-7830'
+      },
+      {
+        id: 'fin_003',
+        category: 'financial_services',
+        name: 'Advance America (6107 Hollywood Blvd)',
+        address: '6107 Hollywood Blvd, Hollywood, FL 33023',
+        lat: 26.011, lng: -80.193,
+        rating: 5.0, reviews: 995,
+        hours: 'Opens 10 AM',
+        notes: 'Phone: (954) 893-5440'
+      },
+
+      // ── ETHNIC GROCERY ─────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: 'Key Food Supermarkets (3025 Johnson St)',
+        address: '3025 Johnson St, Hollywood, FL 33023',
+        lat: 26.001, lng: -80.186,
+        rating: 4.3, reviews: 2718,
+        hours: 'Opens 6:45 AM',
+        notes: 'Phone: (954) 893-1104; Caribbean-focused supermarket; hosts MoneyGram'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: 'S & A Caribbean Market',
+        address: '6232 Pembroke Rd, Hollywood, FL 33023',
+        lat: 25.992, lng: -80.194,
+        rating: 4.5, reviews: 102,
+        hours: 'Opens 10 AM',
+        notes: 'Phone: (954) 961-6160; Caribbean grocery near Pembroke Rd'
+      },
+
+      // ── DOLLAR STORES ──────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Dollar Tree (192 S State Rd 7)',
+        address: '192 S State Rd 7, Hollywood, FL 33023',
+        lat: 25.994, lng: -80.211,
+        rating: 4.2, reviews: 197,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (754) 202-4530'
+      },
+      {
+        id: 'ds_002',
+        category: 'dollar_store',
+        name: 'Dollar General (830 S State Rd 7)',
+        address: '830 S State Rd 7, Hollywood, FL 33023',
+        lat: 25.987, lng: -80.211,
+        rating: 3.9, reviews: 392,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (954) 613-1284'
+      },
+
+      // ── LAUNDROMATS ────────────────────────────────────────────────────────
+      {
+        id: 'lm_001',
+        category: 'laundromat',
+        name: 'Planet Wash Laundry',
+        address: '150 N State Rd 7, Hollywood, FL 33023',
+        lat: 25.997, lng: -80.211,
+        rating: 4.9, reviews: 1404,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (754) 253-5901; top-rated laundromat in ZIP'
+      },
+      {
+        id: 'lm_002',
+        category: 'laundromat',
+        name: 'Silver Coin Laundromat',
+        address: '6330 Johnson St, Hollywood, FL 33023',
+        lat: 26.001, lng: -80.194,
+        rating: 4.1, reviews: 110,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (954) 987-6144'
+      }
+
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  '33142': {
+    label: 'ZIP 33142 — Allapattah / Miami',
+    map: {
+      latMin: 25.793, latMax: 25.843, latRange: 0.050,
+      lngMin: -80.262, lngMax: -80.212, lngRange: 0.050,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'NW 17th Ave',  lng: -80.228 },
+        { name: 'NW 27th Ave',  lng: -80.241 }
+      ],
+      ew: [
+        { name: 'NW 54th St',   lat: 25.831 },
+        { name: 'NW 36th St',   lat: 25.806 }
+      ]
+    },
+    streets: [
+      { type: 'ns', x: 476, weight: 3, label: 'NW 17th Ave' },
+      { type: 'ns', x: 294, weight: 3, label: 'NW 27th Ave' },
+      { type: 'ew', y: 125, weight: 2, label: 'NW 54th St',  labelX: 30, labelY: 121 },
+      { type: 'ew', y: 385, weight: 3, label: 'NW 36th St',  labelX: 30, labelY: 381 }
+    ],
+    demographics: {
+      areaName: 'Allapattah — Miami-Dade County',
+      population: '~56,000',
+      foreignBorn: { pct: '~48%', count: '~26,900 residents' },
+      unbanked:    { pct: '~30%', note: 'significantly above national avg; dense working-class immigrant base' },
+      poverty:     { pct: '~25%', medianHHI: '$30,000' },
+      diaspora: [
+        { name: 'Cuban / Cuban-American',       pct: '~28%' },
+        { name: 'Dominican / Puerto Rican',     pct: '~18%' },
+        { name: 'Honduran / Central American',  pct: '~15%' },
+        { name: 'Haitian',                      pct: '~12%' }
+      ],
+      context: 'Allapattah (ZIP 33142) is one of Miami\'s most densely active remittance markets, with NW 17th and NW 27th Avenues forming twin competitive corridors. WU and MoneyGram each have 8+ non-bigbox agents. The Cuban and Dominican sending base is supplemented by large Honduran and Haitian communities. High WU density creates potential cannibalization risk in the NW 27th Ave cluster.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ──────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union (3001 NW 17th Ave)',
+        address: '3001 NW 17th Ave, Miami, FL 33142',
+        lat: 25.820, lng: -80.228,
+        rating: 3.1, reviews: 7,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (786) 482-6822'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union (3598 NW 27th Ave)',
+        address: '3598 NW 27th Ave, Miami, FL 33142',
+        lat: 25.821, lng: -80.241,
+        rating: 3.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 634-6922'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union (1055 NW 27th Ave)',
+        address: '1055 NW 27th Ave, Miami, FL 33142',
+        lat: 25.802, lng: -80.241,
+        rating: 2.3, reviews: 3,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (305) 456-3643'
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union (2106 NW 17th Ave)',
+        address: '2106 NW 17th Ave, Miami, FL 33142',
+        lat: 25.812, lng: -80.228,
+        rating: 4.7, reviews: 6,
+        hours: 'Opens 8:30 AM',
+        notes: 'Phone: (786) 803-8000; highest-rated WU in ZIP'
+      },
+      {
+        id: 'wu_005',
+        category: 'western_union',
+        name: 'Western Union @ Century Supermarket',
+        address: '3395 NW 32nd Ave, Miami, FL 33142',
+        lat: 25.818, lng: -80.248,
+        rating: null, reviews: null,
+        hours: 'Opens 6:30 AM',
+        notes: 'Phone: (305) 634-3438; inside Century Supermarket'
+      },
+      {
+        id: 'wu_006',
+        category: 'western_union',
+        name: 'Western Union Money Order Only (5700 NW 22nd Ave)',
+        address: '5700 NW 22nd Ave, Miami, FL 33142',
+        lat: 25.833, lng: -80.234,
+        rating: 5.0, reviews: 1,
+        hours: 'Open 24 hours',
+        notes: 'Money Order Only — not wire transfer capable. Phone: (305) 638-0757',
+        bigbox: true
+      },
+      {
+        id: 'wu_007',
+        category: 'western_union',
+        name: 'Western Union Money Order Only (735 NW 12th Ave)',
+        address: '735 NW 12th Ave, Miami, FL 33142',
+        lat: 25.798, lng: -80.222,
+        rating: null, reviews: null,
+        hours: 'Open 24 hours',
+        notes: 'Money Order Only — not wire transfer capable. Phone: (305) 549-5570',
+        bigbox: true
+      },
+
+      // ── MONEYGRAM ──────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram (2612 NW 27th Ave)',
+        address: '2612 NW 27th Ave, Miami, FL 33142',
+        lat: 25.816, lng: -80.241,
+        rating: null, reviews: null,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (786) 488-7678'
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram @ Multi Express Services',
+        address: '2960 NW 17th Ave, Miami, FL 33142',
+        lat: 25.819, lng: -80.228,
+        rating: 3.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 633-2871'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram @ Maltez Discount',
+        address: '2490 NW 20th St, Miami, FL 33142',
+        lat: 25.813, lng: -80.234,
+        rating: 4.3, reviews: 3,
+        hours: 'Opens 8:30 AM',
+        notes: 'Phone: (305) 546-9688'
+      },
+      {
+        id: 'mg_004',
+        category: 'moneygram',
+        name: 'MoneyGram (3401 NW 32nd Ave)',
+        address: '3401 NW 32nd Ave, Miami, FL 33142',
+        lat: 25.818, lng: -80.248,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 634-6554'
+      },
+      {
+        id: 'mg_005',
+        category: 'moneygram',
+        name: 'MoneyGram (3523 NW 17th Ave)',
+        address: '3523 NW 17th Ave, Miami, FL 33142',
+        lat: 25.820, lng: -80.228,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 922-5258'
+      },
+      {
+        id: 'mg_006',
+        category: 'moneygram',
+        name: 'MoneyGram (1451 NW 17th Ave)',
+        address: '1451 NW 17th Ave, Miami, FL 33142',
+        lat: 25.808, lng: -80.228,
+        rating: 1.0, reviews: 5,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (305) 325-1500'
+      },
+
+      // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────
+      {
+        id: 'ria_001',
+        category: 'ria',
+        name: 'Ria @ Cristiana Grocery',
+        address: '2290 NW 36th St, Miami, FL 33142',
+        lat: 25.820, lng: -80.233,
+        rating: 1.0, reviews: 2,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 636-3619'
+      },
+      {
+        id: 'ria_002',
+        category: 'ria',
+        name: 'Ria @ SDQ Travel',
+        address: '2290 NW 28th St Unit C, Miami, FL 33142',
+        lat: 25.816, lng: -80.242,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (305) 635-6314; travel agency + remittance'
+      },
+
+      // ── FINANCIAL SERVICES ─────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: 'Check Cashing USA (1717 NW 17th Ave)',
+        address: '1717 NW 17th Ave, Miami, FL 33142',
+        lat: 25.810, lng: -80.228,
+        rating: 4.8, reviews: 194,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (786) 221-0572'
+      },
+      {
+        id: 'fin_002',
+        category: 'financial_services',
+        name: 'Check Cashing USA (3598 NW 27th Ave)',
+        address: '3598 NW 27th Ave, Miami, FL 33142',
+        lat: 25.821, lng: -80.241,
+        rating: 4.9, reviews: 677,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 634-6922; co-located with WU_002'
+      },
+
+      // ── ETHNIC GROCERY ─────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: 'Latinos Miami Supermarket',
+        address: '1139 NW 22nd Ave, Miami, FL 33142',
+        lat: 25.802, lng: -80.234,
+        rating: 3.7, reviews: 3,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (786) 691-9390'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: 'Century Supermarket',
+        address: '3395 NW 32nd Ave, Miami, FL 33142',
+        lat: 25.818, lng: -80.248,
+        rating: 4.2, reviews: 486,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (305) 634-3438; large Cuban supermarket; hosts WU'
+      },
+
+      // ── DOLLAR STORES ──────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Dollar Tree (2905 NW 27th Ave)',
+        address: '2905 NW 27th Ave, Miami, FL 33142',
+        lat: 25.815, lng: -80.241,
+        rating: 4.4, reviews: 330,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (786) 453-1320'
+      },
+      {
+        id: 'ds_002',
+        category: 'dollar_store',
+        name: 'Family Dollar (3311 NW 17th Ave)',
+        address: '3311 NW 17th Ave, Miami, FL 33142',
+        lat: 25.818, lng: -80.228,
+        rating: 3.8, reviews: 323,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (786) 475-7678'
+      },
+      {
+        id: 'ds_003',
+        category: 'dollar_store',
+        name: 'Ulloa Dollar Store',
+        address: '2102 NW 17th Ave, Miami, FL 33142',
+        lat: 25.812, lng: -80.228,
+        rating: 4.5, reviews: 172,
+        hours: 'Opens 7:30 AM',
+        notes: 'Phone: (305) 326-9122'
+      },
+
+      // ── LAUNDROMATS ────────────────────────────────────────────────────────
+      {
+        id: 'lm_001',
+        category: 'laundromat',
+        name: 'La Mía Coin Laundry',
+        address: '1601 NW 29th St, Miami, FL 33142',
+        lat: 25.816, lng: -80.242,
+        rating: 4.0, reviews: 169,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (305) 634-4332'
+      },
+      {
+        id: 'lm_002',
+        category: 'laundromat',
+        name: 'Allapattah Coin Laundry',
+        address: '1946 NW 17th Ave, Miami, FL 33142',
+        lat: 25.810, lng: -80.228,
+        rating: 4.6, reviews: 88,
+        hours: 'Opens 7 AM',
+        notes: 'High foot traffic on NW 17th Ave'
+      },
+      {
+        id: 'lm_003',
+        category: 'laundromat',
+        name: 'Wash Time Coin Laundry',
+        address: '1375 NW 27th Ave, Miami, FL 33142',
+        lat: 25.808, lng: -80.241,
+        rating: 3.8, reviews: 211,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (786) 409-2502'
+      }
+
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  '33144': {
+    label: 'ZIP 33144 — Westchester / Miami',
+    map: {
+      latMin: 25.754, latMax: 25.797, latRange: 0.043,
+      lngMin: -80.357, lngMax: -80.292, lngRange: 0.065,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'SW 67th Ave', lng: -80.306 },
+        { name: 'SW 77th Ave', lng: -80.319 },
+        { name: 'SW 87th Ave', lng: -80.329 }
+      ],
+      ew: [
+        { name: 'W Flagler St', lat: 25.776 },
+        { name: 'SW 8th St',    lat: 25.766 }
+      ]
+    },
+    streets: [
+      { type: 'ns', x: 549, weight: 2, label: 'SW 67th Ave' },
+      { type: 'ns', x: 409, weight: 2, label: 'SW 77th Ave' },
+      { type: 'ns', x: 301, weight: 2, label: 'SW 87th Ave' },
+      { type: 'ew', y: 254, weight: 3, label: 'W Flagler St', labelX: 30, labelY: 250 },
+      { type: 'ew', y: 375, weight: 3, label: 'SW 8th St',    labelX: 30, labelY: 371 }
+    ],
+    demographics: {
+      areaName: 'Westchester — Miami-Dade County',
+      population: '~63,000',
+      foreignBorn: { pct: '~60%', count: '~37,800 residents' },
+      unbanked:    { pct: '~22%', note: 'moderate; Cuban-American community has higher banking access than newer arrivals' },
+      poverty:     { pct: '~18%', medianHHI: '$48,000' },
+      diaspora: [
+        { name: 'Cuban / Cuban-American',   pct: '~45%' },
+        { name: 'Colombian',                pct: '~15%' },
+        { name: 'Venezuelan',               pct: '~12%' },
+        { name: 'Nicaraguan',               pct: '~8%'  }
+      ],
+      context: 'Westchester (ZIP 33144) is one of Miami\'s most densely Cuban-American ZIPs, with a commercial spine along W Flagler St and SW 8th St (Calle Ocho extension). WU has 9+ agents across the corridor. The high foreign-born rate (60%) and strong Venezuelan / Colombian growth are driving new remittance demand that supplements the historic Cuban base. WU density along Flagler is high, creating multiple potential REDUCE zones.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ──────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union @ Amscot (8400 W Flagler St)',
+        address: '8400 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.326,
+        rating: 2.6, reviews: 7,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (305) 507-9245; inside Amscot financial'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union (8327 W Flagler St)',
+        address: '8327 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.325,
+        rating: 3.7, reviews: 3,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 261-2214'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union (1500 SW 57th Ave)',
+        address: '1500 SW 57th Ave, Miami, FL 33144',
+        lat: 25.766, lng: -80.297,
+        rating: 4.0, reviews: 1,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 265-8019'
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union @ Max Supermarket (7461 SW 8th St)',
+        address: '7461 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.316,
+        rating: null, reviews: null,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (786) 803-8564; inside Max Supermarket'
+      },
+      {
+        id: 'wu_005',
+        category: 'western_union',
+        name: 'Western Union (998 SW 67th Ave)',
+        address: '998 SW 67th Ave, Miami, FL 33144',
+        lat: 25.766, lng: -80.307,
+        rating: 1.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 261-3602'
+      },
+      {
+        id: 'wu_006',
+        category: 'western_union',
+        name: 'Western Union (8341 W Flagler St)',
+        address: '8341 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.325,
+        rating: 4.5, reviews: 2,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 266-0713'
+      },
+      {
+        id: 'wu_007',
+        category: 'western_union',
+        name: 'Western Union (6709 W Flagler St)',
+        address: '6709 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.312,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 266-6722'
+      },
+      {
+        id: 'wu_008',
+        category: 'western_union',
+        name: 'Western Union (6990 SW 8th St)',
+        address: '6990 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.314,
+        rating: null, reviews: null,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (786) 637-6770'
+      },
+
+      // ── MONEYGRAM ──────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram (5695 SW 8th St)',
+        address: '5695 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.306,
+        rating: 3.0, reviews: 2,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (800) 746-7287'
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram (6991 SW 8th St)',
+        address: '6991 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.314,
+        rating: 4.0, reviews: 2,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (786) 257-4094; also hosts Ria Walmart (bigbox)'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram (9191 W Flagler St)',
+        address: '9191 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.332,
+        rating: 2.0, reviews: 4,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (786) 801-5704'
+      },
+      {
+        id: 'mg_004',
+        category: 'moneygram',
+        name: 'MoneyGram (4801 SW 8th St)',
+        address: '4801 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.304,
+        rating: 3.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 446-4641'
+      },
+      {
+        id: 'mg_005',
+        category: 'moneygram',
+        name: 'MoneyGram @ CVS (8720 W Flagler St)',
+        address: '8720 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.327,
+        rating: 3.0, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (800) 746-7287; big-box pharmacy location',
+        bigbox: true
+      },
+
+      // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────
+      {
+        id: 'ria_001',
+        category: 'ria',
+        name: 'Ria Money Transfer Agent (1306 W Flagler St)',
+        address: '1306 W Flagler St, Miami, FL 33144',
+        lat: 25.779, lng: -80.295,
+        rating: 3.4, reviews: 5,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 644-1877'
+      },
+      {
+        id: 'ria_002',
+        category: 'ria',
+        name: 'Ria @ Walmart (6991 SW 8th St)',
+        address: '6991 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.314,
+        rating: null, reviews: null,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (855) 355-2144; big-box Walmart',
+        bigbox: true
+      },
+
+      // ── FINANCIAL SERVICES ─────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: 'Amscot — The Money Superstore',
+        address: '8400 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.326,
+        rating: 4.3, reviews: 198,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (305) 507-9245; 24/7 financial services hub; hosts WU'
+      },
+      {
+        id: 'fin_002',
+        category: 'financial_services',
+        name: 'Fast Payday Loans (5675 W Flagler St)',
+        address: '5675 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.308,
+        rating: 5.0, reviews: 1362,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (305) 261-9100; highest-rated financial services in ZIP'
+      },
+      {
+        id: 'fin_003',
+        category: 'financial_services',
+        name: 'Money Mart (9517 W Flagler St)',
+        address: '9517 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.335,
+        rating: 5.0, reviews: 382,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (305) 554-8800'
+      },
+
+      // ── ETHNIC GROCERY ─────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: 'Latin American Market',
+        address: '7365 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.317,
+        rating: 4.6, reviews: 159,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 261-4401; Cuban cafe & grocery'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: 'Sabor Tropical Supermarket',
+        address: '6190 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.309,
+        rating: 4.2, reviews: 1555,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 266-6678; large Latin supermarket on Calle Ocho'
+      },
+      {
+        id: 'eg_003',
+        category: 'ethnic_grocery',
+        name: 'Manantial Market',
+        address: '6778 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.313,
+        rating: 4.7, reviews: 1325,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (786) 388-8989; Colombian eatery, bakery & grocery'
+      },
+
+      // ── DOLLAR STORES ──────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Dollar Tree (7097 SW 8th St)',
+        address: '7097 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.315,
+        rating: 4.3, reviews: 823,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (470) 306-0160'
+      },
+      {
+        id: 'ds_002',
+        category: 'dollar_store',
+        name: 'Dollar General (5175 SW 8th St)',
+        address: '5175 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.306,
+        rating: 4.2, reviews: 728,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (786) 633-4430'
+      },
+
+      // ── LAUNDROMATS ────────────────────────────────────────────────────────
+      {
+        id: 'lm_001',
+        category: 'laundromat',
+        name: 'Flagler Laundromat',
+        address: '7289 W Flagler St, Miami, FL 33144',
+        lat: 25.776, lng: -80.316,
+        rating: 4.8, reviews: 553,
+        hours: 'Opens 6 AM',
+        notes: 'Phone: (786) 502-8086; top-rated laundromat in ZIP'
+      },
+      {
+        id: 'lm_002',
+        category: 'laundromat',
+        name: 'Lavadito Coin Laundry',
+        address: '6360 SW 8th St, Miami, FL 33144',
+        lat: 25.766, lng: -80.310,
+        rating: 4.7, reviews: 23,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (786) 834-9695; on Calle Ocho corridor'
+      }
+
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  '33180': {
+    label: 'ZIP 33180 — Aventura / NE Miami-Dade',
+    map: {
+      latMin: 25.955, latMax: 25.995, latRange: 0.040,
+      lngMin: -80.163, lngMax: -80.123, lngRange: 0.040,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'W Dixie Hwy',    lng: -80.147 },
+        { name: 'Biscayne Blvd',  lng: -80.134 }
+      ],
+      ew: [
+        { name: 'NE 199th St',          lat: 25.975 },
+        { name: 'NE Miami Gardens Dr',  lat: 25.978 }
+      ]
+    },
+    streets: [
+      { type: 'ns', x: 280, weight: 3, label: 'W Dixie Hwy'   },
+      { type: 'ns', x: 507, weight: 2, label: 'Biscayne Blvd' },
+      { type: 'ew', y: 260, weight: 3, label: 'NE 199th St',         labelX: 30, labelY: 256 },
+      { type: 'ew', y: 234, weight: 2, label: 'NE Miami Gardens Dr', labelX: 30, labelY: 230 }
+    ],
+    demographics: {
+      areaName: 'Aventura — Miami-Dade County',
+      population: '~38,000',
+      foreignBorn: { pct: '~55%', count: '~20,900 residents' },
+      unbanked:    { pct: '~12%', note: 'below many Miami-Dade ZIPs; higher-income corridor' },
+      poverty:     { pct: '~12%', medianHHI: '$68,000' },
+      diaspora: [
+        { name: 'Brazilian',                    pct: '~18%' },
+        { name: 'Venezuelan / Colombian',       pct: '~20%' },
+        { name: 'Israeli / Argentine / Other',  pct: '~17%' }
+      ],
+      context: 'Aventura (ZIP 33180) is a higher-income ZIP with significant foreign-born population but lower unbanked rates than typical remittance corridors. WU and MoneyGram have thin coverage (3–4 agents each), and Ria has only 1–2 independent agents. Brazilian, Venezuelan, and Colombian sending patterns drive demand, but the affluent profile means average transaction values are higher and volume per agent is lower. Expansion opportunities exist if demand is underserved.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ──────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union (3007 NE 199th St)',
+        address: '3007 NE 199th St, Aventura, FL 33180',
+        lat: 25.975, lng: -80.151,
+        rating: 2.3, reviews: 3,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 936-2483'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union (18665 Biscayne Blvd)',
+        address: '18665 Biscayne Blvd, Aventura, FL 33180',
+        lat: 25.965, lng: -80.133,
+        rating: 2.3, reviews: 3,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (305) 466-2844'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union (2952 NE 199th St)',
+        address: '2952 NE 199th St, Aventura, FL 33180',
+        lat: 25.973, lng: -80.151,
+        rating: null, reviews: null,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 792-1429'
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union @ Loehmanns Fashion Island',
+        address: '18995 Biscayne Blvd, Aventura, FL 33180',
+        lat: 25.975, lng: -80.134,
+        rating: 1.0, reviews: 1,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (305) 931-3761; shopping center location',
+        bigbox: true
+      },
+
+      // ── MONEYGRAM ──────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram (2962 NE 199th St)',
+        address: '2962 NE 199th St, Aventura, FL 33180',
+        lat: 25.973, lng: -80.151,
+        rating: null, reviews: null,
+        hours: 'Opens 7 AM',
+        notes: 'Phone: (800) 746-7287; co-located with WU_003'
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram (1825 NE Miami Gardens Dr)',
+        address: '1825 NE Miami Gardens Dr, Aventura, FL 33180',
+        lat: 25.978, lng: -80.141,
+        rating: 3.5, reviews: 2,
+        hours: 'Opens 8 AM',
+        notes: 'Phone: (800) 746-7287'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram (18501 W Dixie Hwy)',
+        address: '18501 W Dixie Hwy, Aventura, FL 33180',
+        lat: 25.972, lng: -80.147,
+        rating: null, reviews: null,
+        hours: 'Opens 10 AM',
+        notes: 'Phone: (305) 935-2307; co-located with Money Mart'
+      },
+
+      // ── RIA MONEY TRANSFER ─────────────────────────────────────────────────
+      {
+        id: 'ria_001',
+        category: 'ria',
+        name: 'Ria @ Surveying Accessories Cheaper LLC',
+        address: '18739 W Dixie Hwy, Aventura, FL 33180',
+        lat: 25.971, lng: -80.146,
+        rating: null, reviews: null,
+        hours: 'Opens 9:30 AM',
+        notes: 'Phone: (786) 802-3546; multi-service business'
+      },
+
+      // ── FINANCIAL SERVICES ─────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: 'Money Mart (18501 W Dixie Hwy)',
+        address: '18501 W Dixie Hwy, Aventura, FL 33180',
+        lat: 25.972, lng: -80.147,
+        rating: 5.0, reviews: 39,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (305) 935-2307; only check cashing in ZIP core'
+      },
+
+      // ── ETHNIC GROCERY ─────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: 'Brazil Mart Aventura',
+        address: '18505 W Dixie Hwy, Aventura, FL 33180',
+        lat: 25.972, lng: -80.146,
+        rating: 4.5, reviews: 407,
+        hours: 'Opens 9 AM',
+        notes: 'Phone: (305) 932-7849; Brazilian imports grocery; high-income market'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: 'Peruvian Latin Market',
+        address: '2580 Miami Gardens Dr, Aventura, FL 33180',
+        lat: 25.978, lng: -80.149,
+        rating: 4.9, reviews: 26,
+        hours: 'Opens 11 AM',
+        notes: 'Phone: (305) 816-6287; Peruvian specialty grocery'
+      },
+
+      // ── DOLLAR STORES ──────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Dollar Tree (18250 W Dixie Hwy)',
+        address: '18250 W Dixie Hwy, Aventura, FL 33180',
+        lat: 25.970, lng: -80.146,
+        rating: 4.0, reviews: 85,
+        hours: 'Opens 8 AM',
+        notes: 'Western Aventura area'
+      },
+
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  '33139': {
+    label: 'ZIP 33139 — South Beach / Miami Beach',
+    map: {
+      latMin: 25.760, latMax: 25.795, latRange: 0.035,
+      lngMin: -80.148, lngMax: -80.122, lngRange: 0.026,
+      svgW: 700, svgH: 520
+    },
+    corridors: {
+      ns: [
+        { name: 'Alton Rd',       lng: -80.142 },
+        { name: 'Washington Ave', lng: -80.134 },
+        { name: 'Collins Ave',    lng: -80.129 }
+      ],
+      ew: [
+        { name: 'Lincoln Rd',  lat: 25.790 },
+        { name: '5th St',      lat: 25.770 }
+      ]
+    },
+    streets: [
+      { type: 'ns', x: 162, weight: 2, label: 'Alton Rd'       },
+      { type: 'ns', x: 377, weight: 3, label: 'Washington Ave' },
+      { type: 'ns', x: 511, weight: 2, label: 'Collins Ave'    },
+      { type: 'ew', y:  74, weight: 2, label: 'Lincoln Rd',    labelX: 30, labelY: 70  },
+      { type: 'ew', y: 371, weight: 2, label: '5th St',        labelX: 30, labelY: 367 }
+    ],
+    demographics: {
+      areaName: 'South Beach — Miami-Dade County',
+      population: '~40,000',
+      foreignBorn: { pct: '~50%', count: '~20,000 residents' },
+      unbanked:    { pct: '~18%', note: 'hospitality/service workforce drives cash remittance demand' },
+      poverty:     { pct: '~22%', medianHHI: '$55,000' },
+      diaspora: [
+        { name: 'Colombian / Venezuelan',    pct: '~22%' },
+        { name: 'Haitian',                   pct: '~15%' },
+        { name: 'Honduran / Guatemalan',     pct: '~12%' },
+        { name: 'Brazilian / Argentine',     pct: '~10%' }
+      ],
+      context: 'South Beach (ZIP 33139) is a unique remittance market — despite high property values and tourism, the underlying service and hospitality workforce is predominantly Latin American and Caribbean. Washington Ave is the primary remittance spine, with 7+ WU and 8 MG agents packed into a narrow N/S corridor. No independent Ria agents operate in the ZIP. The extreme WU density along Washington Ave between 5th and Lincoln Rd represents the clearest consolidation opportunity in the market.'
+    },
+    stores: [
+
+      // ── WESTERN UNION ──────────────────────────────────────────────────────
+      {
+        id: 'wu_001',
+        category: 'western_union',
+        name: 'Western Union (827 Washington Ave)',
+        address: '827 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.778, lng: -80.134,
+        rating: 3.1, reviews: 16,
+        hours: 'Closes 7 PM',
+        notes: 'Phone: (305) 673-6433; most-reviewed WU in ZIP'
+      },
+      {
+        id: 'wu_002',
+        category: 'western_union',
+        name: 'Western Union (501 Collins Ave)',
+        address: '501 Collins Ave, Miami Beach, FL 33139',
+        lat: 25.771, lng: -80.131,
+        rating: 2.4, reviews: 5,
+        hours: 'Closes 9 PM',
+        notes: 'Phone: (786) 353-1080'
+      },
+      {
+        id: 'wu_003',
+        category: 'western_union',
+        name: 'Western Union (1400 Collins Ave)',
+        address: '1400 Collins Ave, Miami Beach, FL 33139',
+        lat: 25.783, lng: -80.129,
+        rating: 1.3, reviews: 3,
+        hours: 'Closes 9 PM',
+        notes: 'Phone: (305) 423-1050'
+      },
+      {
+        id: 'wu_004',
+        category: 'western_union',
+        name: 'Western Union (1435 Washington Ave)',
+        address: '1435 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.783, lng: -80.134,
+        rating: 1.7, reviews: 3,
+        hours: 'Closes 8 PM',
+        notes: 'Phone: (305) 532-7398'
+      },
+      {
+        id: 'wu_005',
+        category: 'western_union',
+        name: 'Western Union (1669 Collins Ave)',
+        address: '1669 Collins Ave, Miami Beach, FL 33139',
+        lat: 25.785, lng: -80.129,
+        rating: 3.0, reviews: 3,
+        hours: 'Closes 9 PM',
+        notes: 'Phone: (305) 532-7909'
+      },
+      {
+        id: 'wu_006',
+        category: 'western_union',
+        name: 'Western Union (1011 Alton Rd)',
+        address: '1011 Alton Rd, Miami Beach, FL 33139',
+        lat: 25.780, lng: -80.142,
+        rating: null, reviews: null,
+        hours: 'Closes 9 PM',
+        notes: 'Phone: (305) 424-1145'
+      },
+      {
+        id: 'wu_007',
+        category: 'western_union',
+        name: 'Western Union (1700 Alton Rd)',
+        address: '1700 Alton Rd, Miami Beach, FL 33139',
+        lat: 25.786, lng: -80.142,
+        rating: 1.7, reviews: 3,
+        hours: 'Closes 5 PM',
+        notes: 'Phone: (786) 860-6730'
+      },
+      {
+        id: 'wu_008',
+        category: 'western_union',
+        name: 'Western Union (1045 Dade Blvd)',
+        address: '1045 Dade Blvd, Miami Beach, FL 33139',
+        lat: 25.790, lng: -80.137,
+        rating: 4.7, reviews: 3,
+        hours: 'Closes 10 PM',
+        notes: 'Phone: (305) 534-4621; highest-rated WU in ZIP'
+      },
+
+      // ── MONEYGRAM ──────────────────────────────────────────────────────────
+      {
+        id: 'mg_001',
+        category: 'moneygram',
+        name: 'MoneyGram (900 Washington Ave)',
+        address: '900 Washington Ave #3, Miami Beach, FL 33139',
+        lat: 25.779, lng: -80.134,
+        rating: 5.0, reviews: 2,
+        hours: 'Closes 7 PM',
+        notes: 'Phone: (305) 535-8212; top-rated MG in ZIP'
+      },
+      {
+        id: 'mg_002',
+        category: 'moneygram',
+        name: 'MoneyGram (1350 Washington Ave)',
+        address: '1350 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.782, lng: -80.134,
+        rating: 3.2, reviews: 6,
+        hours: 'Closes 9 PM',
+        notes: 'Phone: (305) 672-4117; co-located with ACE Cash Express'
+      },
+      {
+        id: 'mg_003',
+        category: 'moneygram',
+        name: 'MoneyGram (1517 Washington Ave)',
+        address: '1517 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.784, lng: -80.134,
+        rating: null, reviews: null,
+        hours: 'Closes 11 PM',
+        notes: 'Phone: (305) 397-8106'
+      },
+      {
+        id: 'mg_004',
+        category: 'moneygram',
+        name: 'MoneyGram (555 Washington Ave)',
+        address: '555 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.773, lng: -80.134,
+        rating: 1.0, reviews: 1,
+        hours: 'Closes 10 PM',
+        notes: 'Phone: (800) 746-7287'
+      },
+      {
+        id: 'mg_005',
+        category: 'moneygram',
+        name: 'MoneyGram (728 Ocean Dr)',
+        address: '728 Ocean Dr, Miami Beach, FL 33139',
+        lat: 25.776, lng: -80.130,
+        rating: null, reviews: null,
+        hours: 'Open 24 hours',
+        notes: 'Phone: (800) 746-7287; Ocean Drive tourist corridor'
+      },
+      {
+        id: 'mg_006',
+        category: 'moneygram',
+        name: 'MoneyGram (1421 Alton Rd)',
+        address: '1421 Alton Rd, Miami Beach, FL 33139',
+        lat: 25.783, lng: -80.142,
+        rating: 1.7, reviews: 3,
+        hours: 'Closes 11 PM',
+        notes: 'Phone: (800) 746-7287'
+      },
+      {
+        id: 'mg_007',
+        category: 'moneygram',
+        name: 'MoneyGram (812 6th St)',
+        address: '812 6th St, Miami Beach, FL 33139',
+        lat: 25.772, lng: -80.134,
+        rating: null, reviews: null,
+        hours: 'Closes 7 PM',
+        notes: 'Phone: (305) 673-8509; co-located with Meridian Market'
+      },
+      {
+        id: 'mg_008',
+        category: 'moneygram',
+        name: 'MoneyGram (306 Lincoln Rd)',
+        address: '306 Lincoln Rd, Miami Beach, FL 33139',
+        lat: 25.790, lng: -80.133,
+        rating: 1.0, reviews: 1,
+        hours: 'Closes 11 PM',
+        notes: 'Phone: (800) 746-7287; Lincoln Road Mall corridor'
+      },
+
+      // ── FINANCIAL SERVICES ─────────────────────────────────────────────────
+      {
+        id: 'fin_001',
+        category: 'financial_services',
+        name: 'ACE Cash Express (1350 Washington Ave)',
+        address: '1350 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.782, lng: -80.134,
+        rating: 4.9, reviews: 365,
+        hours: 'Closes 7 PM',
+        notes: 'Phone: (305) 672-4117; only dedicated check cashing in ZIP; hosts MoneyGram'
+      },
+
+      // ── ETHNIC GROCERY ─────────────────────────────────────────────────────
+      {
+        id: 'eg_001',
+        category: 'ethnic_grocery',
+        name: 'La Playa Market',
+        address: '247 Collins Ave, Miami Beach, FL 33139',
+        lat: 25.769, lng: -80.131,
+        rating: 4.5, reviews: 660,
+        hours: 'Closes 11 PM',
+        notes: 'Phone: (305) 532-5628; well-reviewed Latin American grocery'
+      },
+      {
+        id: 'eg_002',
+        category: 'ethnic_grocery',
+        name: "Marlins Market Inc",
+        address: '1635 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.785, lng: -80.134,
+        rating: 4.3, reviews: 148,
+        hours: 'Open 24 hours',
+        notes: '24-hour Latin market on Washington Ave'
+      },
+      {
+        id: 'eg_003',
+        category: 'ethnic_grocery',
+        name: 'Meridian Market and Cafe',
+        address: '812 6th St, Miami Beach, FL 33139',
+        lat: 25.772, lng: -80.135,
+        rating: 4.2, reviews: 518,
+        hours: 'Closes 12 AM',
+        notes: 'Phone: (305) 673-8509; international market; hosts MoneyGram'
+      },
+
+      // ── DOLLAR STORES ──────────────────────────────────────────────────────
+      {
+        id: 'ds_001',
+        category: 'dollar_store',
+        name: 'Dollar Bazar LLC',
+        address: '550 Meridian Ave, Miami Beach, FL 33139',
+        lat: 25.773, lng: -80.136,
+        rating: 3.8, reviews: 90,
+        hours: 'Closes 9 PM',
+        notes: 'Phone: (305) 397-8180'
+      },
+      {
+        id: 'ds_002',
+        category: 'dollar_store',
+        name: 'Dollar Star',
+        address: '1421 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.783, lng: -80.134,
+        rating: 3.7, reviews: 20,
+        hours: 'Closes 9 PM',
+        notes: 'Phone: (305) 534-0709'
+      },
+
+      // ── LAUNDROMATS ────────────────────────────────────────────────────────
+      {
+        id: 'lm_001',
+        category: 'laundromat',
+        name: 'Sobe Suds Coin Laundry',
+        address: '1427 Alton Rd, Miami Beach, FL 33139',
+        lat: 25.783, lng: -80.142,
+        rating: 4.1, reviews: 473,
+        hours: 'Closes 10 PM',
+        notes: 'Phone: (305) 673-2313'
+      },
+      {
+        id: 'lm_002',
+        category: 'laundromat',
+        name: 'Wash Club South Beach',
+        address: '510 Washington Ave, Miami Beach, FL 33139',
+        lat: 25.772, lng: -80.134,
+        rating: 4.2, reviews: 315,
+        hours: 'Closes 10 PM',
+        notes: 'Phone: (305) 538-6446'
+      },
+      {
+        id: 'lm_003',
+        category: 'laundromat',
+        name: 'My Sunny Laundry',
+        address: '910 Alton Rd, Miami Beach, FL 33139',
+        lat: 25.780, lng: -80.142,
+        rating: 4.3, reviews: 449,
+        hours: 'Closes 11 PM',
+        notes: 'Phone: (646) 718-8371'
+      }
+
+    ]
   }
 };
 
@@ -1842,9 +3569,9 @@ function renderScorecard() {
     ${!expand.length && !monitor.length && !reduce.length ? '<div class="scorecard-empty">No zones detected with current thresholds.</div>' : ''}
     <div class="scorecard-counts">
       <div class="scorecard-label" style="margin-top:10px;margin-bottom:6px">STORE COUNT (OWNED/INDEPENDENT)</div>
-      <div class="count-row"><span style="color:#F5C518">●</span> Western Union <strong>${wuCount}</strong></div>
-      <div class="count-row"><span style="color:#004B87">●</span> MoneyGram <strong>${mgCount}</strong></div>
-      <div class="count-row"><span style="color:#E31837">●</span> Ria <strong>${riaCount}</strong></div>
+      <div class="count-row"><span style="color:${CATEGORIES.western_union.color}">●</span> Western Union <strong>${wuCount}</strong></div>
+      <div class="count-row"><span style="color:${CATEGORIES.moneygram.color}">●</span> MoneyGram <strong>${mgCount}</strong></div>
+      <div class="count-row"><span style="color:${CATEGORIES.ria.color}">●</span> Ria <strong>${riaCount}</strong></div>
     </div>
   `;
 }
